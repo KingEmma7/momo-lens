@@ -1,0 +1,310 @@
+{
+  "createdAt": "2026-10-23T15:19:35.934Z",
+  "lighthouseVersion": "12.6.1",
+  "browserUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+  "method": "Lighthouse CI local static export, 3 sequential cold-load mobile runs; no thresholds lowered or audits disabled.",
+  "configuration": {
+    "formFactor": "mobile",
+    "screenEmulation": {
+      "mobile": true,
+      "width": 360,
+      "height": 800,
+      "deviceScaleFactor": 1,
+      "disabled": false
+    },
+    "throttlingMethod": "simulate",
+    "throttling": {
+      "rttMs": 150,
+      "throughputKbps": 1638.4,
+      "requestLatencyMs": 562.5,
+      "downloadThroughputKbps": 1474.5600000000002,
+      "uploadThroughputKbps": 675,
+      "cpuSlowdownMultiplier": 4
+    }
+  },
+  "thresholds": {
+    "performance": 90,
+    "accessibility": 100,
+    "best-practices": 95
+  },
+  "runs": [
+    {
+      "run": 1,
+      "fetchTime": "2026-10-23T15:18:30.054Z",
+      "url": "http://localhost:61633/",
+      "scores": {
+        "performance": 92,
+        "accessibility": 100,
+        "best-practices": 100
+      },
+      "metrics": {
+        "first-contentful-paint": {
+          "value": 1180.5018,
+          "unit": "millisecond",
+          "display": "1.2\u00a0s",
+          "score": 0.99
+        },
+        "largest-contentful-paint": {
+          "value": 2641.5018000000005,
+          "unit": "millisecond",
+          "display": "2.6\u00a0s",
+          "score": 0.87
+        },
+        "speed-index": {
+          "value": 3368.4085099853883,
+          "unit": "millisecond",
+          "display": "3.4\u00a0s",
+          "score": 0.9
+        },
+        "total-blocking-time": {
+          "value": 211,
+          "unit": "millisecond",
+          "display": "210\u00a0ms",
+          "score": 0.88
+        },
+        "cumulative-layout-shift": {
+          "value": 0.0001932101779513889,
+          "unit": "unitless",
+          "display": "0",
+          "score": 1
+        },
+        "interactive": {
+          "value": 2641.5018000000005,
+          "unit": "millisecond",
+          "display": "2.6\u00a0s",
+          "score": 0.98
+        },
+        "total-byte-weight": {
+          "value": 202236,
+          "unit": "byte",
+          "display": "Total size was 197\u00a0KiB",
+          "score": 1
+        },
+        "bootup-time": {
+          "value": 359.17600000000084,
+          "unit": "millisecond",
+          "display": "0.4\u00a0s",
+          "score": 1
+        },
+        "mainthread-work-breakdown": {
+          "value": 690.6680000000018,
+          "unit": "millisecond",
+          "display": "0.7\u00a0s",
+          "score": 1
+        }
+      },
+      "binaryAuditFailures": [],
+      "performanceDiagnostics": [
+        {
+          "id": "largest-contentful-paint",
+          "weight": 25,
+          "score": 0.87,
+          "display": "2.6\u00a0s"
+        },
+        {
+          "id": "total-blocking-time",
+          "weight": 30,
+          "score": 0.88,
+          "display": "210\u00a0ms"
+        }
+      ],
+      "runtimeError": null,
+      "reportJson": "lighthouse-mobile-run-1.json"
+    },
+    {
+      "run": 2,
+      "fetchTime": "2026-10-23T15:18:46.123Z",
+      "url": "http://localhost:61633/",
+      "scores": {
+        "performance": 98,
+        "accessibility": 100,
+        "best-practices": 100
+      },
+      "metrics": {
+        "first-contentful-paint": {
+          "value": 1063.56225,
+          "unit": "millisecond",
+          "display": "1.1\u00a0s",
+          "score": 1
+        },
+        "largest-contentful-paint": {
+          "value": 2292.0415000000003,
+          "unit": "millisecond",
+          "display": "2.3\u00a0s",
+          "score": 0.93
+        },
+        "speed-index": {
+          "value": 1063.56225,
+          "unit": "millisecond",
+          "display": "1.1\u00a0s",
+          "score": 1
+        },
+        "total-blocking-time": {
+          "value": 62,
+          "unit": "millisecond",
+          "display": "60\u00a0ms",
+          "score": 1
+        },
+        "cumulative-layout-shift": {
+          "value": 0.0001932101779513889,
+          "unit": "unitless",
+          "display": "0",
+          "score": 1
+        },
+        "interactive": {
+          "value": 2372.0779125,
+          "unit": "millisecond",
+          "display": "2.4\u00a0s",
+          "score": 0.99
+        },
+        "total-byte-weight": {
+          "value": 202236,
+          "unit": "byte",
+          "display": "Total size was 197\u00a0KiB",
+          "score": 1
+        },
+        "bootup-time": {
+          "value": 262.3519999999995,
+          "unit": "millisecond",
+          "display": "0.3\u00a0s",
+          "score": 1
+        },
+        "mainthread-work-breakdown": {
+          "value": 515.0199999999995,
+          "unit": "millisecond",
+          "display": "0.5\u00a0s",
+          "score": 1
+        }
+      },
+      "binaryAuditFailures": [],
+      "performanceDiagnostics": [],
+      "runtimeError": null,
+      "reportJson": "lighthouse-mobile-run-2.json"
+    },
+    {
+      "run": 3,
+      "fetchTime": "2026-10-23T15:18:59.447Z",
+      "url": "http://localhost:61633/",
+      "scores": {
+        "performance": 99,
+        "accessibility": 100,
+        "best-practices": 100
+      },
+      "metrics": {
+        "first-contentful-paint": {
+          "value": 1077.32055,
+          "unit": "millisecond",
+          "display": "1.1\u00a0s",
+          "score": 0.99
+        },
+        "largest-contentful-paint": {
+          "value": 1985.2136999999998,
+          "unit": "millisecond",
+          "display": "2.0\u00a0s",
+          "score": 0.97
+        },
+        "speed-index": {
+          "value": 1077.32055,
+          "unit": "millisecond",
+          "display": "1.1\u00a0s",
+          "score": 1
+        },
+        "total-blocking-time": {
+          "value": 55,
+          "unit": "millisecond",
+          "display": "60\u00a0ms",
+          "score": 1
+        },
+        "cumulative-layout-shift": {
+          "value": 0.0001932101779513889,
+          "unit": "unitless",
+          "display": "0",
+          "score": 1
+        },
+        "interactive": {
+          "value": 2369.8205500000004,
+          "unit": "millisecond",
+          "display": "2.4\u00a0s",
+          "score": 0.99
+        },
+        "total-byte-weight": {
+          "value": 202236,
+          "unit": "byte",
+          "display": "Total size was 197\u00a0KiB",
+          "score": 1
+        },
+        "bootup-time": {
+          "value": 345.4440000000001,
+          "unit": "millisecond",
+          "display": "0.3\u00a0s",
+          "score": 1
+        },
+        "mainthread-work-breakdown": {
+          "value": 557.5639999999997,
+          "unit": "millisecond",
+          "display": "0.6\u00a0s",
+          "score": 1
+        }
+      },
+      "binaryAuditFailures": [],
+      "performanceDiagnostics": [],
+      "runtimeError": null,
+      "reportJson": "lighthouse-mobile-run-3.json"
+    }
+  ],
+  "medians": {
+    "performance": 98,
+    "accessibility": 100,
+    "best-practices": 100
+  },
+  "medianMetrics": {
+    "first-contentful-paint": {
+      "value": 1077.32055,
+      "unit": "millisecond"
+    },
+    "largest-contentful-paint": {
+      "value": 2292.0415000000003,
+      "unit": "millisecond"
+    },
+    "speed-index": {
+      "value": 1077.32055,
+      "unit": "millisecond"
+    },
+    "total-blocking-time": {
+      "value": 62,
+      "unit": "millisecond"
+    },
+    "cumulative-layout-shift": {
+      "value": 0.0001932101779513889,
+      "unit": "unitless"
+    },
+    "interactive": {
+      "value": 2372.0779125,
+      "unit": "millisecond"
+    },
+    "total-byte-weight": {
+      "value": 202236,
+      "unit": "byte"
+    },
+    "bootup-time": {
+      "value": 345.4440000000001,
+      "unit": "millisecond"
+    },
+    "mainthread-work-breakdown": {
+      "value": 557.5639999999997,
+      "unit": "millisecond"
+    }
+  },
+  "allRunsMeetTargets": true,
+  "assertions": [],
+  "staticExportIndexSha256": "3ec703f6b0c91b3e2532e8a31327fb112c6d1bdd954761c3eea8f2ff15edf904",
+  "serviceWorkerCache": "momo-lens-e529127d4b6de2b8",
+  "reportsDirectory": "docs/reports",
+  "homeJavaScript": {
+    "requests": 7,
+    "transferredBytes": 148964,
+    "decodedBytes": 494887,
+    "measurement": "Lighthouse network-requests Script resources, first audited cold-load run; transfer includes response headers."
+  },
+  "medianHtml": "lighthouse-mobile-median.html"
+}

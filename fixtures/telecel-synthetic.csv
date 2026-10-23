@@ -1,0 +1,10 @@
+Telecel Cash - SYNTHETIC EXAMPLE
+Receipt NO,Completion time,Initiation Time,Details,Transaction Status,Paid In,Withdrawn,Balance,Opposite Party
+SYN-TEL-001,2026-09-01 09:00:00,2026-09-01 08:59:55,P2P transfer received,Completed,1500,0,1500,0500000011 - Esi Dapaah
+SYN-TEL-002,2026-09-02 10:30:00,2026-09-02 10:29:55,GhIPSS P2P transfer to 0240000012,Completed,0,-200,1300,0240000012 - Kwame Aidoo
+SYN-TEL-003,2026-09-02 10:30:00,2026-09-02 10:29:55,Transfer fee,Completed,0,-1.5,1298.50,Telecel Cash
+SYN-TEL-004,2026-09-04 08:00:00,2026-09-04 07:59:55,Data bundle purchase,Completed,0,-75,1223.50,Telecel Data
+SYN-TEL-005,2026-09-05 11:00:00,2026-09-05 10:59:55,Airtime purchase,Completed,0,-15,1208.50,Telecel Airtime
+SYN-TEL-006,2026-09-07 13:00:00,2026-09-07 12:59:55,Merchant payment,Completed,0,-150,1058.50,Abena Shop
+SYN-TEL-007,2026-09-08 14:00:00,2026-09-08 13:59:55,Cash out,Completed,0,-300,758.50,0500000013 - Kojo Agent
+SYN-TEL-008,2026-09-10 16:00:00,2026-09-10 15:59:55,Reversal for transfer,Completed,50,0,808.50,Kwame Aidoo

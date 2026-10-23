@@ -1,0 +1,102 @@
+{
+  "date": "2026-10-23",
+  "source": {
+    "kind": "fresh clone of a sanitized temporary local Git source snapshot",
+    "localVerificationCommit": "43547b672f8e2c11f4682fb0c4316de17b1b4f1e",
+    "publicRepository": false,
+    "generatedOutputsAndDependenciesExcluded": true,
+    "workingTreeCleanAfterChecks": true,
+    "note": "Documentation and report files were finalized after source checks. This local commit is not a public release revision."
+  },
+  "environment": {
+    "node": "24.13.0",
+    "pnpm": "11.17.0",
+    "next": "15.5.28",
+    "chromium": "156.0.0.0"
+  },
+  "checks": {
+    "dependencyInstall": {
+      "passed": true,
+      "command": "pnpm install --offline --frozen-lockfile",
+      "packages": 627,
+      "downloaded": 0
+    },
+    "lint": {
+      "passed": true,
+      "command": "pnpm lint",
+      "warnings": 0
+    },
+    "typecheck": {
+      "passed": true,
+      "command": "pnpm typecheck",
+      "routeTypeGenerationIncluded": true
+    },
+    "unit": {
+      "passed": true,
+      "command": "pnpm test:coverage",
+      "tests": 93
+    },
+    "coverage": {
+      "scope": ["lib/parsers", "lib/categorise"],
+      "statements": {
+        "covered": 239,
+        "total": 239,
+        "percent": 100
+      },
+      "branches": {
+        "covered": 201,
+        "total": 213,
+        "percent": 94.36
+      },
+      "functions": {
+        "covered": 44,
+        "total": 44,
+        "percent": 100
+      },
+      "lines": {
+        "covered": 205,
+        "total": 205,
+        "percent": 100
+      }
+    },
+    "build": {
+      "passed": true,
+      "command": "pnpm build",
+      "staticExport": true,
+      "scriptHashCspPages": 9,
+      "offlinePrecacheGenerated": true
+    },
+    "e2e": {
+      "passed": true,
+      "command": "E2E_PORT=3101 pnpm test:e2e",
+      "tests": 38,
+      "durationSeconds": 39.9,
+      "viewports": [
+        {
+          "width": 1280,
+          "height": 720
+        },
+        {
+          "width": 360,
+          "height": 800
+        }
+      ],
+      "axeSeriousOrCriticalFindings": 0
+    },
+    "developmentSmoke": {
+      "passed": true,
+      "command": "pnpm dev --port 3201",
+      "viewportWidth": 360,
+      "localMtnRows": 24,
+      "pageErrors": [],
+      "consoleErrors": [],
+      "sourceNote": "Earlier local clone with the identical final navigation-key correction; final fresh clone separately passed all production checks."
+    }
+  },
+  "relatedEvidence": {
+    "lighthouse": "lighthouse-mobile-summary.json",
+    "visualComputedStyles": "../screenshots/audit.json",
+    "visualPixels": "../screenshots/paint-audit.json",
+    "details": "../VERIFICATION.md"
+  }
+}

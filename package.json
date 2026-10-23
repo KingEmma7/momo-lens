@@ -1,0 +1,63 @@
+{
+  "name": "momo-lens",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Private, on-device mobile money statement analysis for Ghana.",
+  "license": "MIT",
+  "packageManager": "pnpm@11.17.0",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "node scripts/prepare-assets.mjs && node scripts/next.mjs dev --hostname 0.0.0.0",
+    "build": "node scripts/prepare-assets.mjs && node scripts/next.mjs build && node scripts/security-csp.mjs && node scripts/prepare-assets.mjs --precache",
+    "start": "serve out -l 3000",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:e2e": "playwright test",
+    "lint": "eslint . --max-warnings 0",
+    "typecheck": "node scripts/next.mjs typegen && tsc --noEmit",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lighthouse": "lhci autorun"
+  },
+  "dependencies": {
+    "next": "^15.5.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "@radix-ui/react-dialog": "latest",
+    "@radix-ui/react-tabs": "latest",
+    "@radix-ui/react-dropdown-menu": "latest",
+    "@tanstack/react-virtual": "latest",
+    "comlink": "latest",
+    "idb": "latest",
+    "pdfjs-dist": "latest",
+    "papaparse": "latest",
+    "zod": "latest",
+    "recharts": "latest",
+    "html-to-image": "latest",
+    "lucide-react": "latest",
+    "tailwindcss": "^4.0.0",
+    "@tailwindcss/postcss": "^4.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.0",
+    "@types/node": "latest",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@types/papaparse": "latest",
+    "vitest": "latest",
+    "@vitest/coverage-v8": "latest",
+    "fake-indexeddb": "latest",
+    "@playwright/test": "latest",
+    "@axe-core/playwright": "latest",
+    "eslint": "10.13.0",
+    "typescript-eslint": "latest",
+    "prettier": "latest",
+    "@lhci/cli": "latest",
+    "serve": "latest",
+    "pdf-lib": "latest",
+    "@next/eslint-plugin-next": "15.5.28"
+  },
+  "type": "module"
+}

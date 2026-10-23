@@ -1,0 +1,125 @@
+{
+  "method": "Pixel inspection of final PNGs. Non-chart images must be grayscale; chart accent pixels follow the gold channel order. Computed SVG default black in audit.json does not paint any pure black pixels. Antialiased grey and gold edges are expected.",
+  "images": [
+    {
+      "file": "about-desktop.png",
+      "width": 1440,
+      "height": 1397,
+      "nonGreyPixels": 0,
+      "pureBlackPixels": 0,
+      "colouredPixelsFollowGoldChannelOrder": true
+    },
+    {
+      "file": "about-mobile.png",
+      "width": 360,
+      "height": 2273,
+      "nonGreyPixels": 0,
+      "pureBlackPixels": 0,
+      "colouredPixelsFollowGoldChannelOrder": true
+    },
+    {
+      "file": "dashboard-desktop.png",
+      "width": 1440,
+      "height": 4568,
+      "nonGreyPixels": 33168,
+      "pureBlackPixels": 0,
+      "colouredPixelsFollowGoldChannelOrder": true
+    },
+    {
+      "file": "dashboard-mobile.png",
+      "width": 360,
+      "height": 4984,
+      "nonGreyPixels": 4695,
+      "pureBlackPixels": 0,
+      "colouredPixelsFollowGoldChannelOrder": true
+    },
+    {
+      "file": "home-desktop.png",
+      "width": 1440,
+      "height": 1395,
+      "nonGreyPixels": 0,
+      "pureBlackPixels": 0,
+      "colouredPixelsFollowGoldChannelOrder": true
+    },
+    {
+      "file": "home-mobile.png",
+      "width": 360,
+      "height": 1757,
+      "nonGreyPixels": 0,
+      "pureBlackPixels": 0,
+      "colouredPixelsFollowGoldChannelOrder": true
+    },
+    {
+      "file": "import-desktop.png",
+      "width": 1440,
+      "height": 1245,
+      "nonGreyPixels": 0,
+      "pureBlackPixels": 0,
+      "colouredPixelsFollowGoldChannelOrder": true
+    },
+    {
+      "file": "import-mobile.png",
+      "width": 360,
+      "height": 1999,
+      "nonGreyPixels": 0,
+      "pureBlackPixels": 0,
+      "colouredPixelsFollowGoldChannelOrder": true
+    },
+    {
+      "file": "privacy-desktop.png",
+      "width": 1440,
+      "height": 1417,
+      "nonGreyPixels": 0,
+      "pureBlackPixels": 0,
+      "colouredPixelsFollowGoldChannelOrder": true
+    },
+    {
+      "file": "privacy-mobile.png",
+      "width": 360,
+      "height": 2430,
+      "nonGreyPixels": 0,
+      "pureBlackPixels": 0,
+      "colouredPixelsFollowGoldChannelOrder": true
+    },
+    {
+      "file": "review-desktop.png",
+      "width": 1440,
+      "height": 1445,
+      "nonGreyPixels": 0,
+      "pureBlackPixels": 0,
+      "colouredPixelsFollowGoldChannelOrder": true
+    },
+    {
+      "file": "review-mobile.png",
+      "width": 360,
+      "height": 1791,
+      "nonGreyPixels": 0,
+      "pureBlackPixels": 0,
+      "colouredPixelsFollowGoldChannelOrder": true
+    },
+    {
+      "file": "wrapped-desktop.png",
+      "width": 1440,
+      "height": 1383,
+      "nonGreyPixels": 0,
+      "pureBlackPixels": 0,
+      "colouredPixelsFollowGoldChannelOrder": true
+    },
+    {
+      "file": "wrapped-export.png",
+      "width": 1080,
+      "height": 1350,
+      "nonGreyPixels": 0,
+      "pureBlackPixels": 0,
+      "colouredPixelsFollowGoldChannelOrder": true
+    },
+    {
+      "file": "wrapped-mobile.png",
+      "width": 360,
+      "height": 2237,
+      "nonGreyPixels": 0,
+      "pureBlackPixels": 0,
+      "colouredPixelsFollowGoldChannelOrder": true
+    }
+  ]
+}

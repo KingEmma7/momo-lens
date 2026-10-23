@@ -1,0 +1,9 @@
+node_modules
+.next
+out
+coverage
+pnpm-lock.yaml
+public/pdf.worker.min.mjs
+public/precache-manifest.js
+playwright-report
+test-results

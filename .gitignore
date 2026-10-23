@@ -1,0 +1,13 @@
+node_modules/
+.next/
+out/
+coverage/
+playwright-report/
+test-results/
+.lighthouseci/
+.sites-runtime/
+*.tsbuildinfo
+public/pdf.worker.min.mjs
+public/precache-manifest.js
+.DS_Store
+lighthouse-results/
