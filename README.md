@@ -4,7 +4,7 @@
 
 MoMo Lens is an open source, in-browser analyzer for Ghana mobile money statements. Import a statement, review the transactions, and see spending by month, category, and counterparty. It works without a server processing your statement.
 
-A public demo URL is not configured for this release.
+**[Open MoMo Lens](https://momo-lens.etagbor.workers.dev/)** and choose **Load sample data** to explore invented transactions.
 
 MoMo Lens is not affiliated with MTN or Telecel. This is a community project. Parser results are estimates derived from statement text. Check your statement before relying on a total or classification. Real, safely redacted statements are still needed to validate provider layouts.
 
@@ -96,7 +96,7 @@ Screenshots use synthetic sample data. Every route is shown at 1440 px desktop w
 
 ## Deploy
 
-Build with `pnpm build` and serve the static `out/` directory. No environment variables or application secrets are needed. Follow the [hosting and release checklist](docs/DEPLOYMENT.md) to preserve offline support and security headers. A public repository does not imply a hosted demo.
+Build with `pnpm build` and serve the static `out/` directory. No environment variables or application secrets are needed. Follow the [hosting and release checklist](docs/DEPLOYMENT.md) to preserve offline support and security headers. The public demo runs on Cloudflare Workers Static Assets at a dedicated origin.
 
 ## License
 

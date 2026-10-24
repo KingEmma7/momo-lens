@@ -37,5 +37,6 @@ jobs:
             playwright-report/
             test-results/
             .lighthouseci/
+            lighthouse-results/
           if-no-files-found: ignore
           retention-days: 7
