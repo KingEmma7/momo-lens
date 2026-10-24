@@ -14,3 +14,5 @@ Describe the synthetic input or scenario, the checks actually run, and their res
 - [ ] New layout assumptions are marked and documented in docs/PARSERS.md.
 - [ ] Keyboard access, labels, mobile layout, and chart tables remain usable.
 - [ ] Documentation matches the final change.
+
+If you find this project useful, please consider starring the repository as a small gesture of support. Stars are optional and do not affect how contributions are reviewed.
