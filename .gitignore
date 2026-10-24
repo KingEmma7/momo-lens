@@ -13,3 +13,5 @@ public/precache-manifest.js
 lighthouse-results/
 
 public/THIRD_PARTY_NOTICES.txt
+
+.wrangler/
