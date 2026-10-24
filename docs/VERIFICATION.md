@@ -1,6 +1,6 @@
 # Verification and limits
 
-Independent local verification on 23 October 2026 used synthetic statements, a fresh source copy, Node 22.23.4, pnpm 11.17.0 and the frozen lockfile. These are measured local results. They do not claim hosted CI results, deployment, universal provider compatibility or physical-device certification.
+Independent local verification on 23 October 2026 used synthetic statements, a fresh source copy, Node 22.23.4, pnpm 11.17.0 and the frozen lockfile. The table below records local results, separate from hosted CI. Neither establishes deployment, universal provider compatibility or physical-device certification.
 
 | Check                                      | Measured result                                                                                                                            |
 | ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -19,6 +19,10 @@ Independent local verification on 23 October 2026 used synthetic statements, a f
 Coverage includes `lib/parsers` and `lib/categorise`, excluding type-only files. It is not whole-application coverage. Identity, storage, analytics, workers and the UI have separate checks outside that denominator. Lighthouse used a compressed local static server and simulated mobile throttling. Those measurements do not establish low-end-phone performance.
 
 After the full-suite checkpoint, a singular/plural wording repair passed four targeted i18n checks, two browser cases, lint, types and a new production export. The Lighthouse results above use that wording build. Parser assumption comments were added with unchanged emitted logic. A later documentation refresh does not change runtime behavior.
+
+## GitHub verification
+
+The public source commit `e1531b6b49535bbdab47402f732de72f382f937a` passed the [complete GitHub workflow](https://github.com/KingEmma7/momo-lens/actions/runs/40086752635) on 24 October 2026: frozen install, archive-security regressions, lint, types, coverage, production build, browser tests and Lighthouse. Later documentation corrections do not change application behavior. The [Actions page](https://github.com/KingEmma7/momo-lens/actions) shows checks for subsequent commits.
 
 ## Privacy, recovery and offline checks
 
