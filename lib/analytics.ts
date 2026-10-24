@@ -1,8 +1,10 @@
+import { t, type TranslationKey } from './i18n/index';
 import { CATEGORIES } from './categorise/defaults';
 import type { Transaction } from './parsers/types';
 
 export interface CategoryTotal {
   id: string;
+  labelKey: TranslationKey;
   label: string;
   amount: number;
   count: number;
@@ -14,6 +16,7 @@ export interface MonthlyTotal {
   net: number;
 }
 export interface CounterpartyTotal {
+  key: string;
   name: string;
   amount: number;
   count: number;
@@ -49,17 +52,19 @@ export function summarise(transactions: readonly Transaction[]): Summary {
   const recipients = new Map<string, CounterpartyTotal>();
   const senders = new Map<string, CounterpartyTotal>();
   const group = (map: Map<string, CounterpartyTotal>, tx: Transaction): void => {
-    const name = tx.counterpartyName ?? tx.counterpartyMasked ?? 'Unknown counterparty';
-    const current = map.get(name) ?? { name, amount: 0, count: 0 };
+    const name = tx.counterpartyName ?? tx.counterpartyMasked ?? t('Unknown counterparty');
+    const key = tx.counterpartyKey ?? name;
+    const current = map.get(key) ?? { key, name, amount: 0, count: 0 };
     current.amount += tx.amount;
     current.count += 1;
-    map.set(name, current);
+    map.set(key, current);
   };
   const addCategory = (id: string, amount: number): void => {
     if (amount === 0) return;
     const current = categories.get(id) ?? {
       id,
-      label: CATEGORIES.find((category) => category.id === id)?.label ?? 'Other',
+      labelKey: CATEGORIES.find((category) => category.id === id)?.labelKey ?? 'Other',
+      label: CATEGORIES.find((category) => category.id === id)?.label ?? t('Other'),
       amount: 0,
       count: 0,
     };
@@ -117,7 +122,7 @@ export function summarise(transactions: readonly Transaction[]): Summary {
     ...[...recipients.values(), ...senders.values()].map((item) => item.amount),
   ];
   if (monetaryTotals.some((value) => !Number.isSafeInteger(value))) {
-    throw new RangeError('The statement total exceeds safe integer money arithmetic.');
+    throw new RangeError(t('The statement total exceeds safe integer money arithmetic.'));
   }
   const sorted = [...transactions].sort((a, b) => a.date.localeCompare(b.date));
   const rank = (map: Map<string, CounterpartyTotal>): CounterpartyTotal[] =>

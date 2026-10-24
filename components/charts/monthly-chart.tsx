@@ -1,8 +1,10 @@
 'use client';
+import { useI18n } from '@/lib/i18n/react';
 import { BarChart, Bar, XAxis, YAxis, LabelList, ResponsiveContainer } from 'recharts';
 import { formatMoney } from '@/lib/money';
 export type MonthDatum = { month: string; incoming: number; outgoing: number };
 export default function MonthlyChart({ data }: { data: MonthDatum[] }) {
+  const { t } = useI18n();
   const multipleYears = new Set(data.map((month) => month.month.slice(0, 4))).size > 1;
   const rows = data.flatMap((month) => {
     const date = new Date(`${month.month}-01T00:00:00Z`);
@@ -12,14 +14,15 @@ export default function MonthlyChart({ data }: { data: MonthDatum[] }) {
       timeZone: 'UTC',
     });
     return [
-      { label: `${label} · Money in`, amount: month.incoming },
-      { label: `${label} · Money out`, amount: month.outgoing },
+      { label: t('{value1} · Money in', { value1: label }), amount: month.incoming },
+      { label: t('{value1} · Money out', { value1: label }), amount: month.outgoing },
     ];
   });
   return (
     <div className="monthly-chart" aria-hidden="true">
       <ResponsiveContainer width="100%" height={Math.max(104, data.length * 80)}>
         <BarChart
+          accessibilityLayer={false}
           data={rows}
           layout="vertical"
           barSize={4}

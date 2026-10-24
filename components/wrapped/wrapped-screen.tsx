@@ -1,4 +1,5 @@
 'use client';
+import { useI18n, TranslatedText } from '@/lib/i18n/react';
 import { useMemo, useState } from 'react';
 import type { Transaction, Settings } from '@/lib/parsers/types';
 import { summarise } from '@/lib/analytics';
@@ -18,6 +19,7 @@ export function Wrapped({
   navigate: (view: View) => void;
   sample?: boolean;
 }) {
+  const { t } = useI18n();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const [status, setStatus] = useState('');
@@ -38,22 +40,26 @@ export function Wrapped({
   const periodText =
     stats.periodStart && stats.periodEnd
       ? `${shortDate(stats.periodStart)} to ${shortDate(stats.periodEnd)}`
-      : 'No transactions in this period';
+      : t('No transactions in this period');
   const entries = [
-    ['Top category', topCategory?.label || 'No outgoing spending'],
-    ['Data bundles', hidden ? 'Hidden' : currency(stats.dataSpend)],
-    ['Transfers', String(stats.transferCount)],
-    ['Fees & levies', hidden ? 'Hidden' : currency(stats.totalFees + stats.totalLevy)],
+    [t('Top category'), topCategory ? t(topCategory.labelKey) : t('No outgoing spending')],
+    [t('Data bundles'), hidden ? t('Hidden') : currency(stats.dataSpend)],
+    [t('Transfers'), String(stats.transferCount)],
+    [t('Fees & levies'), hidden ? t('Hidden') : currency(stats.totalFees + stats.totalLevy)],
   ];
   if (!transactions.length)
     return (
       <>
         <div className="ledger-heading">
-          <h1>Your Wrapped is waiting.</h1>
-          <p>Import a statement to create a summary.</p>
+          <h1>
+            <TranslatedText text={t('Your Wrapped is waiting.')} />
+          </h1>
+          <p>
+            <TranslatedText text={t('Import a statement to create a summary.')} />
+          </p>
         </div>
         <button className="button primary" onClick={() => navigate('import')}>
-          Import statement
+          <TranslatedText text={t('Import statement')} />
         </button>
       </>
     );
@@ -73,15 +79,15 @@ export function Wrapped({
       context.fillRect(0, 0, 1080, 1350);
       context.fillStyle = '#141414';
       context.font = `600 34px ${family}`;
-      context.fillText('momolens.', 78, 108);
+      context.fillText(t('momolens.'), 78, 108);
       context.font = `600 64px ${family}`;
-      context.fillText('MoMo Wrapped', 78, 242);
+      context.fillText(t('MoMo Wrapped'), 78, 242);
       context.fillStyle = '#737373';
       context.font = `400 28px ${family}`;
       context.fillText(periodText, 78, 300, 924);
-      if (sample) context.fillText('Synthetic sample', 78, 350, 924);
+      if (sample) context.fillText(t('Synthetic sample'), 78, 350, 924);
       const exportedEntries = [...entries];
-      if (!namesHidden && recipient) exportedEntries.push(['Most sent to', recipient]);
+      if (!namesHidden && recipient) exportedEntries.push([t('Most sent to'), recipient]);
       exportedEntries.forEach(([label, value], index) => {
         const top = 398 + index * 144;
         context.strokeStyle = '#D9D9D9';
@@ -106,13 +112,13 @@ export function Wrapped({
       context.font = `400 23px ${family}`;
       context.fillText(
         hidden && namesHidden
-          ? 'Names and exact amounts are hidden.'
-          : 'Shared with the privacy settings selected by me.',
+          ? t('Names and exact amounts are hidden.')
+          : t('Shared with the privacy settings selected by me.'),
         78,
         1232,
         924,
       );
-      context.fillText('Made with MoMo Lens', 78, 1280);
+      context.fillText(t('Made with MoMo Lens'), 78, 1280);
       const blob = await new Promise<Blob>((resolve, reject) =>
         canvas.toBlob(
           (value) => (value ? resolve(value) : reject(new Error('PNG failed'))),
@@ -122,12 +128,12 @@ export function Wrapped({
       const file = new File([blob], 'my-momo-wrapped.png', { type: 'image/png' });
       if (!fallback && navigator.canShare?.({ files: [file] })) {
         try {
-          await navigator.share({ files: [file], title: 'My MoMo Wrapped' });
-          setStatus('Your Wrapped is ready to share.');
+          await navigator.share({ files: [file], title: t('My MoMo Wrapped') });
+          setStatus(t('Your Wrapped is ready to share.'));
           return;
         } catch (cause) {
           if (cause instanceof DOMException && cause.name === 'AbortError') {
-            setStatus('Sharing cancelled. You can download your card anytime.');
+            setStatus(t('Sharing cancelled. You can download your card anytime.'));
             return;
           }
         }
@@ -138,10 +144,12 @@ export function Wrapped({
       link.download = 'my-momo-wrapped.png';
       link.click();
       setTimeout(() => URL.revokeObjectURL(url), 1000);
-      setStatus('Your Wrapped PNG has been downloaded.');
+      setStatus(t('Your Wrapped PNG has been downloaded.'));
     } catch {
       setError(
-        'Your summary could not be created. Try the download again, or use your browser’s screenshot option.',
+        t(
+          'Your summary could not be created. Try the download again, or use your browser’s screenshot option.',
+        ),
       );
     } finally {
       setBusy(false);
@@ -150,16 +158,32 @@ export function Wrapped({
   return (
     <>
       <div className="ledger-heading">
-        <h1>Meet your MoMo Wrapped.</h1>
-        <p>A summary of the selected period. Names and exact amounts are hidden by default.</p>
+        <h1>
+          <TranslatedText text={t('Meet your MoMo Wrapped.')} />
+        </h1>
+        <p>
+          <TranslatedText
+            text={t(
+              'A summary of the selected period. Names and exact amounts are hidden by default.',
+            )}
+          />
+        </p>
       </div>
       <div className="wrapped-layout">
         <div className="wrapped-preview-zone">
-          <article className="wrapped-card" aria-label="MoMo Wrapped share card">
-            <div className="wrapped-card-top">momolens.</div>
-            <h2>MoMo Wrapped</h2>
+          <article className="wrapped-card" aria-label={t('MoMo Wrapped share card')}>
+            <div className="wrapped-card-top">
+              <TranslatedText text={t('momolens.')} />
+            </div>
+            <h2>
+              <TranslatedText text={t('MoMo Wrapped')} />
+            </h2>
             <p className="wrapped-period">{periodText}</p>
-            {sample && <p>Synthetic sample</p>}
+            {sample && (
+              <p>
+                <TranslatedText text={t('Synthetic sample')} />
+              </p>
+            )}
             <dl className="wrapped-summary-table">
               {entries.map(([label, value]) => (
                 <div className="wrapped-stat" key={label}>
@@ -169,31 +193,43 @@ export function Wrapped({
               ))}
               {!namesHidden && recipient && (
                 <div className="wrapped-stat">
-                  <dt>Most sent to</dt>
+                  <dt>
+                    <TranslatedText text={t('Most sent to')} />
+                  </dt>
                   <dd>{recipient}</dd>
                 </div>
               )}
             </dl>
             <div className="wrapped-card-bottom">
               <p>
-                {hidden && namesHidden
-                  ? 'Names and exact amounts are hidden.'
-                  : 'Shared with the privacy settings selected by me.'}
+                <TranslatedText
+                  text={
+                    hidden && namesHidden
+                      ? t('Names and exact amounts are hidden.')
+                      : t('Shared with the privacy settings selected by me.')
+                  }
+                />
               </p>
-              <p>Made with MoMo Lens</p>
+              <p>
+                <TranslatedText text={t('Made with MoMo Lens')} />
+              </p>
             </div>
           </article>
         </div>
         <aside className="wrapped-controls">
-          <h2>Export settings</h2>
+          <h2>
+            <TranslatedText text={t('Export settings')} />
+          </h2>
           <label className="form-label">
-            Period
+            <TranslatedText text={t('Period')} />
             <select
-              aria-label="Wrapped period"
+              aria-label={t('Wrapped period')}
               value={period}
               onChange={(event) => setPeriod(event.target.value)}
             >
-              <option value="all">All time</option>
+              <option value="all">
+                <TranslatedText text={t('All time')} />
+              </option>
               {[...new Set(transactions.map((transaction) => transaction.date.slice(0, 7)))]
                 .sort()
                 .map((month) => (
@@ -206,14 +242,18 @@ export function Wrapped({
           <div className="privacy-toggles">
             <label className="toggle-row">
               <span>
-                <strong>Hide amounts</strong>
-                <small>Keep exact amounts private</small>
+                <strong>
+                  <TranslatedText text={t('Hide amounts')} />
+                </strong>
+                <small>
+                  <TranslatedText text={t('Keep exact amounts private')} />
+                </small>
               </span>
               <input
                 type="checkbox"
                 role="switch"
                 checked={hidden}
-                aria-label="Hide amounts"
+                aria-label={t('Hide amounts')}
                 onChange={(event) =>
                   setSettings({ ...settings, hideAmountsInShare: event.target.checked })
                 }
@@ -221,14 +261,18 @@ export function Wrapped({
             </label>
             <label className="toggle-row">
               <span>
-                <strong>Hide names</strong>
-                <small>Keep counterparty names private</small>
+                <strong>
+                  <TranslatedText text={t('Hide names')} />
+                </strong>
+                <small>
+                  <TranslatedText text={t('Keep counterparty names private')} />
+                </small>
               </span>
               <input
                 type="checkbox"
                 role="switch"
                 checked={namesHidden}
-                aria-label="Hide names"
+                aria-label={t('Hide names')}
                 onChange={(event) =>
                   setSettings({ ...settings, hideNamesInShare: event.target.checked })
                 }
@@ -236,14 +280,24 @@ export function Wrapped({
             </label>
           </div>
           <p className="share-privacy-note">
-            {hidden && namesHidden
-              ? 'Names and exact amounts are hidden. Transfer counts and category labels will be visible.'
-              : 'Your summary may show names or exact amounts. Check the preview before sharing.'}
+            <TranslatedText
+              text={
+                hidden && namesHidden
+                  ? t(
+                      'Names and exact amounts are hidden. Transfer counts and category labels will be visible.',
+                    )
+                  : t(
+                      'Your summary may show names or exact amounts. Check the preview before sharing.',
+                    )
+              }
+            />
           </p>
           <button className="button primary full" disabled={busy} onClick={() => void generate()}>
-            {busy ? 'Creating PNG…' : 'Download PNG'}
+            <TranslatedText text={busy ? t('Creating PNG…') : t('Download PNG')} />
           </button>
-          <p className="export-note">Share directly on supported phones, or download the PNG.</p>
+          <p className="export-note">
+            <TranslatedText text={t('Share directly on supported phones, or download the PNG.')} />
+          </p>
           {status && (
             <p role="status" className="success-message">
               {status}
@@ -253,7 +307,7 @@ export function Wrapped({
             <div className="error-message" role="alert">
               {error}
               <button className="button outline" onClick={() => void generate(true)}>
-                Try fallback download
+                <TranslatedText text={t('Try fallback download')} />
               </button>
             </div>
           )}

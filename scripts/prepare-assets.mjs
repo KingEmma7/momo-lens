@@ -98,6 +98,7 @@ if (process.argv.includes('--precache')) {
     source.replace(/const CACHE_NAME = '[^']+';/, `const CACHE_NAME = 'momo-lens-${fingerprint}';`),
   );
 } else {
+  await import('./third-party-notices.mjs');
   const pdfPath = require.resolve('pdfjs-dist/build/pdf.worker.min.mjs');
   await mkdir(path.join(root, 'public/icons'), { recursive: true });
   await copyFile(pdfPath, path.join(root, 'public/pdf.worker.min.mjs'));

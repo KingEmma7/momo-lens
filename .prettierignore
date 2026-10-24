@@ -7,3 +7,9 @@ public/pdf.worker.min.mjs
 public/precache-manifest.js
 playwright-report
 test-results
+docs/reports/lighthouse-mobile-*.html
+docs/reports/lighthouse-mobile-*.json
+docs/screenshots/audit.json
+
+# Vendored security patch retains upstream formatting.
+patches/

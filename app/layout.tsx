@@ -1,12 +1,14 @@
+import { t } from '@/lib/i18n';
 import type { Metadata, Viewport } from 'next';
 import './globals.css';
 export const metadata: Metadata = {
-  title: 'MoMo Lens | Your money, a clearer picture',
-  description:
+  title: t('MoMo Lens | Your money, a clearer picture'),
+  description: t(
     'Understand your Ghana mobile money statement. No uploads, no accounts, no tracking. Everything stays on your device.',
+  ),
   manifest: '/manifest.webmanifest',
-  applicationName: 'MoMo Lens',
-  appleWebApp: { capable: true, statusBarStyle: 'default', title: 'MoMo Lens' },
+  applicationName: t('MoMo Lens'),
+  appleWebApp: { capable: true, statusBarStyle: 'default', title: t('MoMo Lens') },
   icons: { icon: '/icons/icon.svg', apple: '/icons/icon-192.png' },
 };
 export const viewport: Viewport = { width: 'device-width', initialScale: 1, themeColor: '#141414' };

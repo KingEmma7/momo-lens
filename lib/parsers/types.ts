@@ -1,3 +1,4 @@
+import type { TranslationKey } from '../i18n/en';
 export type Pesewas = number & { readonly __brand: 'Pesewas' };
 export type Provider = 'mtn-gh' | 'telecel-gh' | 'generic';
 export type TransactionType =
@@ -23,6 +24,7 @@ export interface Transaction {
   balanceAfter?: Pesewas;
   counterpartyName?: string;
   counterpartyMasked?: string;
+  counterpartyKey?: string;
   reference?: string;
   rawDescription: string;
   categoryId: string;
@@ -30,13 +32,19 @@ export interface Transaction {
 }
 export interface Category {
   id: string;
+  labelKey: TranslationKey;
   label: string;
   icon: string;
   colour: string;
 }
 export interface Rule {
   id: string;
-  match: { counterparty?: string; descriptionContains?: string; type?: TransactionType };
+  match: {
+    counterparty?: string;
+    counterpartyKey?: string;
+    descriptionContains?: string;
+    type?: TransactionType;
+  };
   categoryId: string;
   createdAt: string;
 }

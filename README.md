@@ -4,7 +4,7 @@
 
 MoMo Lens is an open source, in-browser analyzer for Ghana mobile money statements. Import a statement, review the transactions, and see spending by month, category, and counterparty. It works without a server processing your statement.
 
-Demo: `https://YOUR-DEPLOYMENT.example` (replace when a public release is available).
+A public demo URL is not configured for this release.
 
 MoMo Lens is not affiliated with MTN or Telecel. This is a community project. Parser results are estimates derived from statement text. Check your statement before relying on a total or classification. Real, safely redacted statements are still needed to validate provider layouts.
 
@@ -21,24 +21,25 @@ MoMo Lens is not affiliated with MTN or Telecel. This is a community project. Pa
 
 ## Run locally
 
-Use the Node and pnpm versions declared in `package.json`.
+Use Node 22.23.4 and pnpm 11.17.0 for the tested setup. The repository pins pnpm in `package.json`. With Corepack installed, run `corepack prepare pnpm@11.17.0 --activate`.
 
 ```sh
-pnpm install
+pnpm install --frozen-lockfile
 pnpm dev
 ```
 
-Open [localhost:3000](http://localhost:3000). For a production build:
+Open [localhost:3000](http://localhost:3000), choose **Import statement**, then **Load sample data**, and explore the invented transactions before importing a file. Remembering data is off by default.
+
+For a production build and checks:
 
 ```sh
 pnpm lint
 pnpm typecheck
-pnpm test
 pnpm test:coverage
 pnpm exec playwright install chromium
 pnpm build
 pnpm test:e2e
-pnpm exec serve out -l 3000
+pnpm start
 ```
 
 `pnpm build` creates a fully static export in `out/`. `pnpm test:e2e` starts its configured local server. Do not run a second server on the same test port. Test fixtures contain invented people, numbers, references, and amounts. Do not replace them with a private statement. The committed encrypted PDF uses the public test password `lens-demo`; `fixtures/generate-password-pdf.py` can regenerate it with the optional ReportLab Python package. Normal installation and CI do not require Python.
@@ -60,6 +61,12 @@ Statement bytes are read by a local Web Worker. Parsed transactions remain in me
 Use **Delete all my data** to remove remembered transactions, rules, settings, and the current session. The PWA's application cache contains code and synthetic sample assets, not imported statements. Clearing browser site data also removes local data. Private browsing or a full device can prevent persistence; the app then keeps working in memory and shows a notice.
 
 See [data flow and limitations](docs/PRIVACY.md), [parser assumptions](docs/PARSERS.md), and [security reporting](SECURITY.md). Hosting still receives ordinary requests for application files. Initial code downloads and deliberate navigation to external provider help pages require a network connection. No third-party scripts, hosted fonts, trackers, analytics, or automatic error-reporting services are used.
+
+## Help and contribute
+
+[Report a bug, request a parser layout or suggest an improvement](https://github.com/KingEmma7/momo-lens/issues/new/choose). Include the app version, browser, steps and an invented example. Keep statements, account details, PINs and OTPs out of public reports. Use [private reporting](SECURITY.md) for security vulnerabilities.
+
+Browse [good first issues](https://github.com/KingEmma7/momo-lens/labels/good%20first%20issue) and read [CONTRIBUTING.md](CONTRIBUTING.md). Small documentation improvements, synthetic fixtures and focused regression tests are welcome.
 
 ## Add or fix a parser
 
@@ -89,32 +96,12 @@ Screenshots use synthetic sample data. Every route is shown at 1440 px desktop w
 
 ## Deploy
 
-No environment variables or secrets are needed. Build with `pnpm build`, then serve `out/` as static files. Vercel, Netlify, and Cloudflare Pages can serve this export. Keep trailing-slash directories intact so direct route loads resolve to the route's `index.html`.
-
-- **Vercel:** use the included `vercel.json`, install with pnpm, and choose `out` as the output directory.
-- **Cloudflare Pages:** use `pnpm build`, output `out`, and preserve `public/_headers`, which Next copies into the export.
-- **Netlify:** publish `out` and copy the security header policy into Netlify's `_headers` configuration. The Cloudflare-format `_headers` file is compatible with the ordinary static-header syntax.
-
-Serve over HTTPS for installation and Web Share support. Confirm that the host sends the CSP and the other supplied security headers. The production build adds exact inline-script hashes to each page's CSP meta tag and writes the stricter generated header policy to `out/_headers` and `out/csp-policy.txt`. Vercel's broader source header combines with the restrictive page policy; browsers enforce both. A private hosted preview may have host-level authentication; the application itself has no account system. Do not broaden the CSP to add analytics or external scripts.
-
-Release checklist:
-
-- [ ] Install from a clean clone using the pinned lockfile.
-- [ ] Lint, typecheck, unit coverage, production export, E2E, axe, and Lighthouse pass.
-- [ ] Import synthetic MTN, synthetic Telecel, unknown CSV, password-protected PDF, image-only PDF, and 10,000-row CSV.
-- [ ] Confirm duplicate imports and overlapping periods do not double count.
-- [ ] Test every route at 360 px and desktop, using only the keyboard.
-- [ ] Confirm zero application network requests during and after parsing once parser assets are ready.
-- [ ] Install, go offline, reload routes, import, and export Wrapped.
-- [ ] Verify remember, private-mode fallback, quota fallback, reload, and deletion.
-- [ ] Verify host security headers and the service worker update path.
-- [ ] Replace the demo URL placeholder and add a walkthrough GIF.
-- [ ] Review real safely redacted MTN and Telecel statements and update documented assumptions.
-- [ ] Native speaker reviews the Twi strings.
-- [ ] Review dependencies and license notices, then tag a release.
+Build with `pnpm build` and serve the static `out/` directory. No environment variables or application secrets are needed. Follow the [hosting and release checklist](docs/DEPLOYMENT.md) to preserve offline support and security headers. A public repository does not imply a hosted demo.
 
 ## License
 
 MIT. See [LICENSE](LICENSE). Dependency licenses remain with their respective packages.
 
 Inter Tight is bundled locally in regular (400) and semibold (600) weights under the SIL Open Font License. The font source was downloaded from the [official Google Fonts Inter Tight directory](https://github.com/google/fonts/tree/main/ofl/intertight) on 23 October 2026, instanced and subset with FontTools and Brotli to include Latin, Twi letters and the cedi symbol, then saved as WOFF2. The included [font license](public/fonts/OFL.txt) applies to those files. The app fetches fonts only from its own origin.
+
+Third-party redistribution notices are generated with the browser build. See [the licence review](docs/THIRD_PARTY.md).

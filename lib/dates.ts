@@ -1,3 +1,4 @@
+import { t } from './i18n/index';
 const MONTHS = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
 
 // ASSUMPTION: numeric statement dates are day/month/year, and absent times mean midnight UTC+0.
@@ -32,7 +33,7 @@ export function parseDate(value: string): string {
     month = MONTHS.indexOf((named[2] ?? '').toLowerCase()) + 1;
     day = Number(named[1]);
     time = named[4] ?? '';
-  } else throw new Error('Date is not recognised. Use day/month/year or ISO dates.');
+  } else throw new Error(t('Date is not recognised. Use day/month/year or ISO dates.'));
   const [hours = '0', minutes = '0', seconds = '0'] = time.split(':');
   const date = new Date(
     Date.UTC(year, month - 1, day, Number(hours), Number(minutes), Number(seconds)),
@@ -47,7 +48,7 @@ export function parseDate(value: string): string {
     Number(minutes) > 59 ||
     Number(seconds) > 59
   )
-    throw new Error('Date is outside the valid calendar.');
+    throw new Error(t('Date is outside the valid calendar.'));
   return date.toISOString();
 }
 export function formatDate(value: string): string {

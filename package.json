@@ -19,7 +19,8 @@
     "typecheck": "node scripts/next.mjs typegen && tsc --noEmit",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "lighthouse": "lhci autorun"
+    "lighthouse": "lhci autorun",
+    "test:archive-security": "node --test scripts/test-extract-zip.mjs"
   },
   "dependencies": {
     "next": "^15.5.0",

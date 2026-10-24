@@ -1,0 +1,2 @@
+# Unified diff files contain significant context-line prefixes and blank context.
+patches/*.patch -whitespace

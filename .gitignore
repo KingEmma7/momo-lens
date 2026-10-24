@@ -11,3 +11,5 @@ public/pdf.worker.min.mjs
 public/precache-manifest.js
 .DS_Store
 lighthouse-results/
+
+public/THIRD_PARTY_NOTICES.txt

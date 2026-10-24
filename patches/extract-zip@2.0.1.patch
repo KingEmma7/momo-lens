@@ -1,0 +1,106 @@
+diff --git a/index.js b/index.js
+index 23384ea16bb848616886f356d8d69f94325535bf..69510843b895fe9d6b7ca7c8ae971f34e069c860 100644
+--- a/index.js
++++ b/index.js
+@@ -1,6 +1,6 @@
+ const debug = require('debug')('extract-zip')
+ // eslint-disable-next-line node/no-unsupported-features/node-builtins
+-const { createWriteStream, promises: fs } = require('fs')
++const { createWriteStream, constants, promises: fs } = require('fs')
+ const getStream = require('get-stream')
+ const path = require('path')
+ const { promisify } = require('util')
+@@ -53,6 +53,8 @@ class Extractor {
+         const destDir = path.dirname(path.join(this.opts.dir, entry.fileName))
+ 
+         try {
++          // Check before mkdir: even creating a directory through a planted link escapes.
++          await this.assertNoSymlinks(path.join(this.opts.dir, entry.fileName))
+           await fs.mkdir(destDir, { recursive: true })
+ 
+           const canonicalDestDir = await fs.realpath(destDir)
+@@ -74,6 +76,70 @@ class Extractor {
+     })
+   }
+ 
++  async assertNoSymlinks (destination) {
++    const relative = path.relative(this.opts.dir, destination)
++    if (path.isAbsolute(relative) || relative.split(path.sep).includes('..')) {
++      throw new Error('Archive entry is outside the extraction directory')
++    }
++    let current = this.opts.dir
++    for (const part of relative.split(path.sep).filter(Boolean)) {
++      current = path.join(current, part)
++      let stat
++      try {
++        stat = await fs.lstat(current)
++      } catch (err) {
++        if (err.code === 'ENOENT') break
++        throw err
++      }
++      if (stat.isSymbolicLink()) throw new Error('Archive entry would be extracted through a symlink')
++    }
++  }
++
++  checkedLinkPath (link, destination) {
++    if (!link || path.isAbsolute(link) || /^[a-zA-Z]:/.test(link)) {
++      throw new Error('Archive symlink target must be relative')
++    }
++    let depth = path.relative(this.opts.dir, path.dirname(destination)).split(path.sep).filter(Boolean).length
++    let descended = false
++    for (const part of link.split(/[/\\]+/)) {
++      if (part === '..') {
++        if (descended || depth === 0) throw new Error('Archive symlink target escapes the extraction directory')
++        depth--
++      } else if (part && part !== '.') descended = true
++    }
++    const target = path.resolve(path.dirname(destination), link)
++    const relative = path.relative(this.opts.dir, target)
++    if (path.isAbsolute(relative) || relative.split(path.sep).includes('..')) {
++      throw new Error('Archive symlink target is outside the extraction directory')
++    }
++    return target
++  }
++
++  async assertSafeLink (link, destination) {
++    const target = this.checkedLinkPath(link, destination)
++    let pending = path.relative(this.opts.dir, target).split(path.sep).filter(Boolean)
++    let current = this.opts.dir
++    let followed = 0
++    // Resolve existing links even when their final target has not yet been extracted.
++    while (pending.length) {
++      current = path.join(current, pending.shift())
++      if (current === destination) throw new Error('Archive symlink target contains a cycle')
++      let stat
++      try {
++        stat = await fs.lstat(current)
++      } catch (err) {
++        if (err.code === 'ENOENT') return
++        throw err
++      }
++      if (stat.isSymbolicLink()) {
++        if (++followed > 40) throw new Error('Archive symlink target contains a cycle or too many links')
++        const resolved = this.checkedLinkPath(await fs.readlink(current), current)
++        pending = path.relative(this.opts.dir, resolved).split(path.sep).filter(Boolean).concat(pending)
++        current = this.opts.dir
++      }
++    }
++  }
++
+   async extractEntry (entry) {
+     /* istanbul ignore if */
+     if (this.canceled) {
+@@ -126,10 +192,12 @@ class Extractor {
+ 
+     if (symlink) {
+       const link = await getStream(readStream)
++      await this.assertSafeLink(link, dest)
+       debug('creating symlink', link, dest)
+       await fs.symlink(link, dest)
+     } else {
+-      await pipeline(readStream, createWriteStream(dest, { mode: procMode }))
++      const flags = constants.O_WRONLY | constants.O_CREAT | constants.O_TRUNC | (constants.O_NOFOLLOW || 0)
++      await pipeline(readStream, createWriteStream(dest, { mode: procMode, flags }))
+     }
+   }
+ 

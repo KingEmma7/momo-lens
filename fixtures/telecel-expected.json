@@ -1,6 +1,6 @@
 [
   {
-    "id": "c17555d444e14775",
+    "id": "927663160a916a02",
     "provider": "telecel-gh",
     "date": "2026-09-10T16:00:00.000Z",
     "type": "reversal",
@@ -13,10 +13,11 @@
     "categorySource": "default",
     "balanceAfter": 80850,
     "counterpartyName": "Kwame Aidoo",
-    "reference": "SYN-TEL-008"
+    "reference": "SYN-TEL-008",
+    "counterpartyKey": "e20f8acfdab2d0f7"
   },
   {
-    "id": "efa3c8c8ab267096",
+    "id": "7003f2c1ce4ea93d",
     "provider": "telecel-gh",
     "date": "2026-09-08T14:00:00.000Z",
     "type": "cash-out",
@@ -30,10 +31,11 @@
     "balanceAfter": 75850,
     "counterpartyName": "Kojo Agent",
     "counterpartyMasked": "050••••013",
-    "reference": "SYN-TEL-007"
+    "reference": "SYN-TEL-007",
+    "counterpartyKey": "93ab3f08a72fd6f8"
   },
   {
-    "id": "537325037dd6225a",
+    "id": "cc6e94ae2fc44219",
     "provider": "telecel-gh",
     "date": "2026-09-07T13:00:00.000Z",
     "type": "merchant-payment",
@@ -46,10 +48,11 @@
     "categorySource": "default",
     "balanceAfter": 105850,
     "counterpartyName": "Abena Shop",
-    "reference": "SYN-TEL-006"
+    "reference": "SYN-TEL-006",
+    "counterpartyKey": "50271b5487f3ed9d"
   },
   {
-    "id": "0797d1655ffed1d1",
+    "id": "4728805a81463392",
     "provider": "telecel-gh",
     "date": "2026-09-05T11:00:00.000Z",
     "type": "airtime",
@@ -62,10 +65,11 @@
     "categorySource": "default",
     "balanceAfter": 120850,
     "counterpartyName": "Telecel Airtime",
-    "reference": "SYN-TEL-005"
+    "reference": "SYN-TEL-005",
+    "counterpartyKey": "e058094ca23c9c91"
   },
   {
-    "id": "0a1dda830efa7137",
+    "id": "64dee94663bf1e7e",
     "provider": "telecel-gh",
     "date": "2026-09-04T08:00:00.000Z",
     "type": "data",
@@ -78,10 +82,11 @@
     "categorySource": "default",
     "balanceAfter": 122350,
     "counterpartyName": "Telecel Data",
-    "reference": "SYN-TEL-004"
+    "reference": "SYN-TEL-004",
+    "counterpartyKey": "8547f2edf0605d74"
   },
   {
-    "id": "985678eeb768603e",
+    "id": "41fac5d154f3f1a8",
     "provider": "telecel-gh",
     "date": "2026-09-02T10:30:00.000Z",
     "type": "transfer",
@@ -95,10 +100,11 @@
     "balanceAfter": 130000,
     "counterpartyName": "Kwame Aidoo",
     "counterpartyMasked": "024••••012",
-    "reference": "SYN-TEL-002"
+    "reference": "SYN-TEL-002",
+    "counterpartyKey": "682f4472e9545ca6"
   },
   {
-    "id": "6b1cb241c580861d",
+    "id": "bb9e3ba2d2d6c36f",
     "provider": "telecel-gh",
     "date": "2026-09-02T10:30:00.000Z",
     "type": "fee",
@@ -111,10 +117,11 @@
     "categorySource": "default",
     "balanceAfter": 129850,
     "counterpartyName": "Telecel Cash",
-    "reference": "SYN-TEL-003"
+    "reference": "SYN-TEL-003",
+    "counterpartyKey": "fe2b14297c055ef7"
   },
   {
-    "id": "e87d4c5b26abc2ac",
+    "id": "317fd7b1140db286",
     "provider": "telecel-gh",
     "date": "2026-09-01T09:00:00.000Z",
     "type": "transfer",
@@ -128,6 +135,7 @@
     "balanceAfter": 150000,
     "counterpartyName": "Esi Dapaah",
     "counterpartyMasked": "050••••011",
-    "reference": "SYN-TEL-001"
+    "reference": "SYN-TEL-001",
+    "counterpartyKey": "93ab4108a72fda5e"
   }
 ]

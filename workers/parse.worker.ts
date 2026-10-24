@@ -1,3 +1,4 @@
+import { t } from '../lib/i18n/index';
 import { expose } from 'comlink';
 import * as pdfjs from 'pdfjs-dist';
 import { detectAndParse } from '../lib/parsers/registry';
@@ -30,7 +31,7 @@ export function decodeCsv(bytes: ArrayBuffer): { text: string; legacyEncoding: b
   }
 }
 
-export async function warm(): Promise<void> {
+export async function warm(pdfUrl = '/pdf.worker.min.mjs'): Promise<void> {
   if (pdfWorker) return;
   warming ??= (async () => {
     if (typeof Worker === 'undefined') {
@@ -38,12 +39,12 @@ export async function warm(): Promise<void> {
       await pdfWorker.promise;
       return;
     }
-    const port = new Worker('/pdf.worker.min.mjs', { type: 'module', name: 'momo-lens-local-pdf' });
+    const port = new Worker(pdfUrl, { type: 'module', name: 'momo-lens-local-pdf' });
     await new Promise<void>((resolve, reject) => {
       const timeout = setTimeout(() => {
         cleanup();
         port.terminate();
-        reject(new Error('Local PDF worker did not start.'));
+        reject(new Error(t('Local PDF worker did not start.')));
       }, 20_000);
       function cleanup(): void {
         clearTimeout(timeout);
@@ -64,7 +65,7 @@ export async function warm(): Promise<void> {
       function onError(): void {
         cleanup();
         port.terminate();
-        reject(new Error('Local PDF worker did not start.'));
+        reject(new Error(t('Local PDF worker did not start.')));
       }
       port.addEventListener('message', onMessage);
       port.addEventListener('error', onError);
@@ -86,14 +87,14 @@ export async function parse(
   if (input.bytes.byteLength > 25 * 1024 * 1024) {
     return failure(
       'FILE_TOO_LARGE',
-      'This file is larger than 25 MB. Choose a shorter statement period.',
+      t('This file is larger than 25 MB. Choose a shorter statement period.'),
     );
   }
   if (!/\.(csv|pdf)$/i.test(input.name)) {
-    return failure('UNSUPPORTED_FILE', 'Choose a PDF or CSV statement.');
+    return failure('UNSUPPORTED_FILE', t('Choose a PDF or CSV statement.'));
   }
   if (input.bytes.byteLength === 0)
-    return failure('EMPTY_FILE', 'This file is empty. Choose another statement.');
+    return failure('EMPTY_FILE', t('This file is empty. Choose another statement.'));
   onProgress(3);
   try {
     let text: string;
@@ -127,6 +128,7 @@ export async function parse(
           for (const item of content.items) {
             if (!('str' in item)) continue;
             const y = item.transform[5] as number | undefined;
+            // ASSUMPTION: PDF items follow reading order; a vertical change above 3 points starts another line.
             if (lastY !== undefined && y !== undefined && Math.abs(y - lastY) > 3 && line.trim()) {
               lines.push(line.trim());
               line = '';
@@ -160,7 +162,9 @@ export async function parse(
       if (text.replace(/\s/g, '').length < 20) {
         return failure(
           'IMAGE_ONLY',
-          'This PDF has no readable text. It may be a scan. Ask your provider for a text PDF or choose a CSV export.',
+          t(
+            'This PDF has no readable text. It may be a scan. Ask your provider for a text PDF or choose a CSV export.',
+          ),
         );
       }
     } else {
@@ -175,7 +179,9 @@ export async function parse(
     );
     if (legacyEncoding)
       result.session.warnings.push(
-        'This CSV was read using Windows-1252 text encoding. Check names and descriptions in the review.',
+        t(
+          'This CSV was read using Windows-1252 text encoding. Check names and descriptions in the review.',
+        ),
       );
     onProgress(100);
     return { ok: true, result };
@@ -184,16 +190,18 @@ export async function parse(
       return input.password
         ? failure(
             'PASSWORD_INCORRECT',
-            'That password did not open the PDF. Try again. Your password stays on this device.',
+            t('That password did not open the PDF. Try again. Your password stays on this device.'),
           )
         : failure(
             'PASSWORD_REQUIRED',
-            'This PDF needs a password. Enter it to open the statement on this device.',
+            t('This PDF needs a password. Enter it to open the statement on this device.'),
           );
     }
     return failure(
       'PARSE_FAILED',
-      'This statement could not be read. Try a CSV export, or use a redacted statement to report a parser issue.',
+      t(
+        'This statement could not be read. Try a CSV export, or use a redacted statement to report a parser issue.',
+      ),
     );
   }
 }

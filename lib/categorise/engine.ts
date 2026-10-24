@@ -3,6 +3,7 @@ import { CATEGORY_IDS } from './defaults';
 
 export function inferType(description: string): TransactionType {
   const text = description.toLowerCase();
+  // ASSUMPTION: reversal/refund narratives identify separate rows; their parsed sign is retained and no original transaction is guessed.
   if (/revers(?:al|ed)|refund/.test(text)) return 'reversal';
   // ASSUMPTION: only an explicit standalone charge label identifies a fee row.
   // Mentioning a fee inside a transfer narrative must not turn its principal into a fee.
@@ -51,9 +52,10 @@ export function categorise(transaction: Transaction, rules: readonly Rule[] = []
   const ordered = [...rules].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
   const matched = ordered.find((rule) => {
     if (!CATEGORY_IDS.has(rule.categoryId)) return false;
-    const { counterparty, descriptionContains, type } = rule.match;
-    if (!counterparty && !descriptionContains && !type) return false;
+    const { counterparty, counterpartyKey, descriptionContains, type } = rule.match;
+    if (!counterparty && !counterpartyKey && !descriptionContains && !type) return false;
     return (
+      (!counterpartyKey || counterpartyKey === transaction.counterpartyKey) &&
       (!counterparty ||
         counterparty.toLocaleLowerCase('en').trim() ===
           (transaction.counterpartyName ?? transaction.counterpartyMasked ?? '')

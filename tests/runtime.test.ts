@@ -3,6 +3,7 @@ import type { ParseResult, Transaction } from '../lib/parsers/types';
 
 const mocks = vi.hoisted(() => {
   const saved = new Map<string, unknown>();
+  const metadata = new Map<string, unknown>();
   const db = {
     get: vi.fn(async (_store: string, key: string) => saved.get(key)),
     put: vi.fn(async (_store: string, value: unknown, key: string) => {
@@ -15,8 +16,27 @@ const mocks = vi.hoisted(() => {
       saved.clear();
     }),
     close: vi.fn(),
+    transaction: vi.fn(),
   };
+  db.transaction.mockImplementation(() => ({
+    objectStore: (store: string) =>
+      store === 'metadata'
+        ? {
+            get: async (key: string) => metadata.get(key),
+            put: async (value: unknown, key: string) => {
+              metadata.set(key, value);
+            },
+          }
+        : {
+            get: (key: string) => db.get(store, key),
+            put: (value: unknown, key: string) => db.put(store, value, key),
+            delete: (key: string) => db.delete(store, key),
+            clear: () => db.clear(),
+          },
+    done: Promise.resolve(),
+  }));
   return {
+    metadata,
     saved,
     db,
     openDB: vi.fn(async () => db),
@@ -58,11 +78,24 @@ const result: ParseResult = {
 beforeEach(() => {
   vi.resetModules();
   mocks.saved.clear();
+  mocks.metadata.clear();
   mocks.openDB.mockReset().mockResolvedValue(mocks.db);
-  mocks.db.get.mockReset().mockImplementation(async (_store: string, key: string) => mocks.saved.get(key));
-  mocks.db.put.mockReset().mockImplementation(async (_store: string, value: unknown, key: string) => { mocks.saved.set(key, value); });
-  mocks.db.clear.mockReset().mockImplementation(async () => { mocks.saved.clear(); });
-  mocks.db.delete.mockReset().mockImplementation(async (_store: string, key: string) => { mocks.saved.delete(key); });
+  mocks.db.get
+    .mockReset()
+    .mockImplementation(async (store: string, key: string) =>
+      (store === 'metadata' ? mocks.metadata : mocks.saved).get(key),
+    );
+  mocks.db.put
+    .mockReset()
+    .mockImplementation(async (_store: string, value: unknown, key: string) => {
+      mocks.saved.set(key, value);
+    });
+  mocks.db.clear.mockReset().mockImplementation(async () => {
+    mocks.saved.clear();
+  });
+  mocks.db.delete.mockReset().mockImplementation(async (_store: string, key: string) => {
+    mocks.saved.delete(key);
+  });
   mocks.getDocument.mockReset();
   mocks.detectAndParse.mockReset().mockImplementation(async () => structuredClone(result));
   mocks.pdfDestroy.mockClear();
@@ -149,7 +182,12 @@ describe('private storage', () => {
     mocks.openDB.mockRejectedValue(new DOMException('Unavailable', 'SecurityError'));
     const storage = await import('../lib/storage');
     const state = await storage.readData();
-    state.rules.push({ id: 'session-rule', match: { type: 'airtime' }, categoryId: 'other', createdAt: '' });
+    state.rules.push({
+      id: 'session-rule',
+      match: { type: 'airtime' },
+      categoryId: 'other',
+      createdAt: '',
+    });
     await storage.saveData(state);
     expect((await storage.readData()).rules).toHaveLength(1);
     expect(await storage.clearData()).toContain('could not confirm removal');
@@ -160,11 +198,19 @@ describe('private storage', () => {
   it('shares an in-flight initial read rather than returning an empty second snapshot', async () => {
     const storage = await import('../lib/storage');
     const saved = {
-      transactions: [], settings: { ...storage.DEFAULT_SETTINGS, rememberOnDevice: true },
-      rules: [{ id: 'persisted-rule', match: { type: 'airtime' }, categoryId: 'other', createdAt: '' }],
+      transactions: [],
+      settings: { ...storage.DEFAULT_SETTINGS, rememberOnDevice: true },
+      rules: [
+        { id: 'persisted-rule', match: { type: 'airtime' }, categoryId: 'other', createdAt: '' },
+      ],
     };
     let release: (value: unknown) => void = () => undefined;
-    mocks.db.get.mockImplementationOnce(() => new Promise((resolve) => { release = resolve; }));
+    mocks.db.get.mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          release = resolve;
+        }),
+    );
     const firstRead = storage.readData();
     const secondRead = storage.readData();
     await vi.waitFor(() => expect(mocks.db.get).toHaveBeenCalledTimes(1));
@@ -174,26 +220,35 @@ describe('private storage', () => {
     expect(second.rules[0]?.id).toBe('persisted-rule');
   });
 
-  it.each(['delete', 'opt-out'] as const)('serialises an older opt-in write before %s', async (action) => {
-    const storage = await import('../lib/storage');
-    const state = await storage.readData();
-    state.settings.rememberOnDevice = true;
-    let release: () => void = () => undefined;
-    const gate = new Promise<void>((resolve) => { release = resolve; });
-    mocks.db.put.mockImplementationOnce(async (_store: string, value: unknown, key: string) => {
-      await gate;
-      mocks.saved.set(key, value);
-    });
-    const pendingSave = storage.saveData(state);
-    await vi.waitFor(() => expect(mocks.db.put).toHaveBeenCalledTimes(1));
-    const removal = action === 'delete'
-      ? storage.clearData()
-      : storage.saveData({ ...state, settings: { ...state.settings, rememberOnDevice: false } });
-    release();
-    await Promise.all([pendingSave, removal]);
-    expect(mocks.saved.size).toBe(0);
-    expect((await storage.readData()).settings.rememberOnDevice).toBe(false);
-  });
+  it.each(['delete', 'opt-out'] as const)(
+    'serialises an older opt-in write before %s',
+    async (action) => {
+      const storage = await import('../lib/storage');
+      const state = await storage.readData();
+      state.settings.rememberOnDevice = true;
+      let release: () => void = () => undefined;
+      const gate = new Promise<void>((resolve) => {
+        release = resolve;
+      });
+      mocks.db.put.mockImplementationOnce(async (_store: string, value: unknown, key: string) => {
+        await gate;
+        mocks.saved.set(key, value);
+      });
+      const pendingSave = storage.saveData(state);
+      await vi.waitFor(() => expect(mocks.db.put).toHaveBeenCalledTimes(1));
+      const removal =
+        action === 'delete'
+          ? storage.clearData()
+          : storage.saveData({
+              ...state,
+              settings: { ...state.settings, rememberOnDevice: false },
+            });
+      release();
+      await Promise.all([pendingSave, removal]);
+      expect(mocks.saved.size).toBe(0);
+      expect((await storage.readData()).settings.rememberOnDevice).toBe(false);
+    },
+  );
 
   it('reports an unverifiable saved copy when opting out cannot remove it', async () => {
     const storage = await import('../lib/storage');
@@ -210,18 +265,23 @@ describe('private storage', () => {
   it('does not restore a late initial read after the user clears data', async () => {
     const storage = await import('../lib/storage');
     let release: (value: unknown) => void = () => undefined;
-    mocks.db.get.mockImplementationOnce(() => new Promise((resolve) => { release = resolve; }));
+    mocks.db.get.mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          release = resolve;
+        }),
+    );
     const pendingRead = storage.readData();
     await vi.waitFor(() => expect(mocks.db.get).toHaveBeenCalledTimes(1));
     const removal = storage.clearData();
     release({
-      transactions: [], settings: { ...storage.DEFAULT_SETTINGS, rememberOnDevice: true },
+      transactions: [],
+      settings: { ...storage.DEFAULT_SETTINGS, rememberOnDevice: true },
       rules: [{ id: 'old-rule', match: {}, categoryId: 'other', createdAt: '' }],
     });
     await Promise.all([pendingRead, removal]);
     expect((await storage.readData()).rules).toEqual([]);
   });
-
 });
 
 describe('local parsing worker', () => {

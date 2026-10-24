@@ -1,6 +1,6 @@
 [
   {
-    "id": "77f12a5ba0c829ae",
+    "id": "66d5917843c8d572",
     "provider": "mtn-gh",
     "date": "2026-09-22T19:00:00.000Z",
     "type": "merchant-payment",
@@ -14,10 +14,11 @@
     "balanceAfter": 526625,
     "counterpartyName": "Neighbourhood Cafe",
     "counterpartyMasked": "024••••008",
-    "reference": "SYN-MTN-024"
+    "reference": "SYN-MTN-024",
+    "counterpartyKey": "6832d072e9578061"
   },
   {
-    "id": "ad80fa3e51e3fa79",
+    "id": "f71bbb8af0750100",
     "provider": "mtn-gh",
     "date": "2026-09-18T10:00:00.000Z",
     "type": "bill",
@@ -31,10 +32,11 @@
     "balanceAfter": 535125,
     "counterpartyName": "ECG",
     "counterpartyMasked": "024••••005",
-    "reference": "SYN-MTN-023"
+    "reference": "SYN-MTN-023",
+    "counterpartyKey": "6832cb72e95777e2"
   },
   {
-    "id": "374960adeae827f4",
+    "id": "b8a147c36ffdfeb3",
     "provider": "mtn-gh",
     "date": "2026-09-16T14:00:00.000Z",
     "type": "transfer",
@@ -48,10 +50,11 @@
     "balanceAfter": 557125,
     "counterpartyName": "Ama Owusu",
     "counterpartyMasked": "055••••007",
-    "reference": "SYN-MTN-022"
+    "reference": "SYN-MTN-022",
+    "counterpartyKey": "1c3f161c651d7cc8"
   },
   {
-    "id": "298f3ef016ecc67f",
+    "id": "9656eb5faaefde42",
     "provider": "mtn-gh",
     "date": "2026-09-14T09:00:00.000Z",
     "type": "airtime",
@@ -65,10 +68,11 @@
     "balanceAfter": 532125,
     "counterpartyName": "MTN Airtime",
     "counterpartyMasked": "024••••000",
-    "reference": "SYN-MTN-021"
+    "reference": "SYN-MTN-021",
+    "counterpartyKey": "6832c872e95772c9"
   },
   {
-    "id": "0b772e0b9a63200b",
+    "id": "1cdb7c9211d0cd67",
     "provider": "mtn-gh",
     "date": "2026-09-11T12:00:00.000Z",
     "type": "cash-out",
@@ -82,10 +86,11 @@
     "balanceAfter": 536125,
     "counterpartyName": "Adom Agent",
     "counterpartyMasked": "024••••003",
-    "reference": "SYN-MTN-020"
+    "reference": "SYN-MTN-020",
+    "counterpartyKey": "6832c572e9576db0"
   },
   {
-    "id": "7f0328526ecf47ce",
+    "id": "1e8a88aa61827d24",
     "provider": "mtn-gh",
     "date": "2026-09-07T18:00:00.000Z",
     "type": "merchant-payment",
@@ -99,10 +104,11 @@
     "balanceAfter": 586625,
     "counterpartyName": "Osu Groceries",
     "counterpartyMasked": "024••••004",
-    "reference": "SYN-MTN-019"
+    "reference": "SYN-MTN-019",
+    "counterpartyKey": "6832cc72e9577995"
   },
   {
-    "id": "bc103e4f00cbaa7d",
+    "id": "7eadd45383380c24",
     "provider": "mtn-gh",
     "date": "2026-09-05T08:00:00.000Z",
     "type": "data",
@@ -116,10 +122,11 @@
     "balanceAfter": 622625,
     "counterpartyName": "MTN Data",
     "counterpartyMasked": "024••••000",
-    "reference": "SYN-MTN-018"
+    "reference": "SYN-MTN-018",
+    "counterpartyKey": "6832c872e95772c9"
   },
   {
-    "id": "bf244aec8815d75f",
+    "id": "9c8ddfbcb3fc221c",
     "provider": "mtn-gh",
     "date": "2026-09-03T13:00:00.000Z",
     "type": "transfer",
@@ -133,10 +140,11 @@
     "balanceAfter": 640625,
     "counterpartyName": "Kofi Boateng",
     "counterpartyMasked": "020••••002",
-    "reference": "SYN-MTN-017"
+    "reference": "SYN-MTN-017",
+    "counterpartyKey": "fa6a5460d4cd9227"
   },
   {
-    "id": "4e32dffc7d001dac",
+    "id": "4d8f46005a46977b",
     "provider": "mtn-gh",
     "date": "2026-09-01T09:00:00.000Z",
     "type": "transfer",
@@ -150,10 +158,11 @@
     "balanceAfter": 701075,
     "counterpartyName": "Akosua Mensah",
     "counterpartyMasked": "024••••001",
-    "reference": "SYN-MTN-016"
+    "reference": "SYN-MTN-016",
+    "counterpartyKey": "6832c772e9577116"
   },
   {
-    "id": "e5522be232211272",
+    "id": "9d3d18e6637e3b85",
     "provider": "mtn-gh",
     "date": "2026-08-15T10:00:00.000Z",
     "type": "bill",
@@ -167,10 +176,11 @@
     "balanceAfter": 351075,
     "counterpartyName": "ECG",
     "counterpartyMasked": "024••••005",
-    "reference": "SYN-MTN-015"
+    "reference": "SYN-MTN-015",
+    "counterpartyKey": "6832cb72e95777e2"
   },
   {
-    "id": "93c5af3607e1c550",
+    "id": "d5c5637609ca79f1",
     "provider": "mtn-gh",
     "date": "2026-08-13T15:10:00.000Z",
     "type": "airtime",
@@ -184,10 +194,11 @@
     "balanceAfter": 371075,
     "counterpartyName": "MTN Airtime",
     "counterpartyMasked": "024••••000",
-    "reference": "SYN-MTN-014"
+    "reference": "SYN-MTN-014",
+    "counterpartyKey": "6832c872e95772c9"
   },
   {
-    "id": "f76db01450bad577",
+    "id": "3bc25a5e07e2a652",
     "provider": "mtn-gh",
     "date": "2026-08-09T10:00:00.000Z",
     "type": "cash-out",
@@ -201,10 +212,11 @@
     "balanceAfter": 374075,
     "counterpartyName": "Adom Agent",
     "counterpartyMasked": "024••••003",
-    "reference": "SYN-MTN-013"
+    "reference": "SYN-MTN-013",
+    "counterpartyKey": "6832c572e9576db0"
   },
   {
-    "id": "7d80435c9110cb7a",
+    "id": "6684fc40d0f4d070",
     "provider": "mtn-gh",
     "date": "2026-08-06T18:15:00.000Z",
     "type": "merchant-payment",
@@ -218,10 +230,11 @@
     "balanceAfter": 414475,
     "counterpartyName": "Accra Market",
     "counterpartyMasked": "024••••006",
-    "reference": "SYN-MTN-012"
+    "reference": "SYN-MTN-012",
+    "counterpartyKey": "6832ca72e957762f"
   },
   {
-    "id": "bda9a7d21b0133dc",
+    "id": "5a7346c9b083f86f",
     "provider": "mtn-gh",
     "date": "2026-08-04T08:30:00.000Z",
     "type": "data",
@@ -235,10 +248,11 @@
     "balanceAfter": 446975,
     "counterpartyName": "MTN Data",
     "counterpartyMasked": "024••••000",
-    "reference": "SYN-MTN-011"
+    "reference": "SYN-MTN-011",
+    "counterpartyKey": "6832c872e95772c9"
   },
   {
-    "id": "9f81399c766bd29d",
+    "id": "816afcf00f00649a",
     "provider": "mtn-gh",
     "date": "2026-08-03T12:00:00.000Z",
     "type": "transfer",
@@ -252,10 +266,11 @@
     "balanceAfter": 461975,
     "counterpartyName": "Kofi Boateng",
     "counterpartyMasked": "020••••002",
-    "reference": "SYN-MTN-010"
+    "reference": "SYN-MTN-010",
+    "counterpartyKey": "fa6a5460d4cd9227"
   },
   {
-    "id": "864ebdb646164d6c",
+    "id": "9db5a1db4dca903b",
     "provider": "mtn-gh",
     "date": "2026-08-01T09:00:00.000Z",
     "type": "transfer",
@@ -269,10 +284,11 @@
     "balanceAfter": 512350,
     "counterpartyName": "Akosua Mensah",
     "counterpartyMasked": "024••••001",
-    "reference": "SYN-MTN-009"
+    "reference": "SYN-MTN-009",
+    "counterpartyKey": "6832c772e9577116"
   },
   {
-    "id": "a493cbc3de43f2ae",
+    "id": "ff7fd73b60c7da8d",
     "provider": "mtn-gh",
     "date": "2026-07-12T15:30:00.000Z",
     "type": "reversal",
@@ -286,10 +302,11 @@
     "balanceAfter": 192350,
     "counterpartyName": "Kofi Boateng",
     "counterpartyMasked": "020••••002",
-    "reference": "SYN-MTN-008"
+    "reference": "SYN-MTN-008",
+    "counterpartyKey": "fa6a5460d4cd9227"
   },
   {
-    "id": "fa5f7b938ef5330b",
+    "id": "0d26d86182ef6672",
     "provider": "mtn-gh",
     "date": "2026-07-10T11:00:00.000Z",
     "type": "bill",
@@ -303,10 +320,11 @@
     "balanceAfter": 187350,
     "counterpartyName": "ECG",
     "counterpartyMasked": "024••••005",
-    "reference": "SYN-MTN-007"
+    "reference": "SYN-MTN-007",
+    "counterpartyKey": "6832cb72e95777e2"
   },
   {
-    "id": "0d542fbd74460331",
+    "id": "724c2c4cb0871331",
     "provider": "mtn-gh",
     "date": "2026-07-08T19:20:00.000Z",
     "type": "merchant-payment",
@@ -320,10 +338,11 @@
     "balanceAfter": 205350,
     "counterpartyName": "Osu Groceries",
     "counterpartyMasked": "024••••004",
-    "reference": "SYN-MTN-006"
+    "reference": "SYN-MTN-006",
+    "counterpartyKey": "6832cc72e9577995"
   },
   {
-    "id": "f31cd083c024e12e",
+    "id": "4b0a7d18bce8f9a0",
     "provider": "mtn-gh",
     "date": "2026-07-06T10:00:00.000Z",
     "type": "cash-out",
@@ -337,10 +356,11 @@
     "balanceAfter": 229900,
     "counterpartyName": "Adom Agent",
     "counterpartyMasked": "024••••003",
-    "reference": "SYN-MTN-005"
+    "reference": "SYN-MTN-005",
+    "counterpartyKey": "6832c572e9576db0"
   },
   {
-    "id": "f502122ef105a593",
+    "id": "93dc4e01c5e5cece",
     "provider": "mtn-gh",
     "date": "2026-07-04T16:10:00.000Z",
     "type": "airtime",
@@ -354,10 +374,11 @@
     "balanceAfter": 260200,
     "counterpartyName": "MTN Airtime",
     "counterpartyMasked": "024••••000",
-    "reference": "SYN-MTN-004"
+    "reference": "SYN-MTN-004",
+    "counterpartyKey": "6832c872e95772c9"
   },
   {
-    "id": "f58633a5fe0f1f4f",
+    "id": "f9b8035ed94f72ae",
     "provider": "mtn-gh",
     "date": "2026-07-03T07:30:00.000Z",
     "type": "data",
@@ -371,10 +392,11 @@
     "balanceAfter": 262700,
     "counterpartyName": "MTN Data",
     "counterpartyMasked": "024••••000",
-    "reference": "SYN-MTN-003"
+    "reference": "SYN-MTN-003",
+    "counterpartyKey": "6832c872e95772c9"
   },
   {
-    "id": "6e4fb65cf151bb44",
+    "id": "ac4a5f533e2a6ff9",
     "provider": "mtn-gh",
     "date": "2026-07-02T13:05:00.000Z",
     "type": "transfer",
@@ -388,10 +410,11 @@
     "balanceAfter": 274700,
     "counterpartyName": "Kofi Boateng",
     "counterpartyMasked": "020••••002",
-    "reference": "SYN-MTN-002"
+    "reference": "SYN-MTN-002",
+    "counterpartyKey": "fa6a5460d4cd9227"
   },
   {
-    "id": "e004507476d4849d",
+    "id": "b722ccb2c22b3762",
     "provider": "mtn-gh",
     "date": "2026-07-01T09:00:00.000Z",
     "type": "transfer",
@@ -405,6 +428,7 @@
     "balanceAfter": 320000,
     "counterpartyName": "Akosua Mensah",
     "counterpartyMasked": "024••••001",
-    "reference": "SYN-MTN-001"
+    "reference": "SYN-MTN-001",
+    "counterpartyKey": "6832c772e9577116"
   }
 ]

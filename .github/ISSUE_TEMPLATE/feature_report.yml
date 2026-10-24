@@ -1,0 +1,17 @@
+name: Feature request
+description: Suggest a focused improvement to local statement analysis
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What task is difficult today?
+      description: Describe the user need without including personal transaction data.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Suggested behavior
+      description: Keep processing local. Explain how this fits the documented project scope.
+    validations:
+      required: true

@@ -1,4 +1,5 @@
 'use client';
+import { useI18n, TranslatedText } from '@/lib/i18n/react';
 import type { View } from '@/lib/ui-types';
 export function Home({
   navigate,
@@ -11,26 +12,38 @@ export function Home({
   busy: boolean;
   error: string;
 }) {
+  const { t } = useI18n();
   return (
     <>
       <section className="home-intro">
-        <h1>A clear record of your mobile money.</h1>
+        <h1>
+          <TranslatedText text={t('A clear record of your mobile money.')} />
+        </h1>
         <p>
-          Read your MTN MoMo or Telecel Cash statement, check your transactions and see what you
-          spent. No uploads, no accounts, no tracking.
+          <TranslatedText
+            text={t(
+              'Read your MTN MoMo or Telecel Cash statement, check your transactions and see what you spent. No uploads, no accounts, no tracking.',
+            )}
+          />
         </p>
         <div className="home-actions">
           <button className="button primary" onClick={() => navigate('import')}>
-            Import my statement
+            <TranslatedText text={t('Import my statement')} />
           </button>
           <button className="button outline" onClick={loadSample} disabled={busy}>
-            {busy ? 'Reading sample…' : 'Try sample data'}
+            <TranslatedText text={busy ? t('Reading sample…') : t('Try sample data')} />
           </button>
         </div>
         <p className="muted">
-          PDF and CSV. No account required. Sample transactions are synthetic.
+          <TranslatedText
+            text={t('PDF and CSV. No account required. Sample transactions are synthetic.')}
+          />
         </p>
-        {busy && <p role="status">Reading the synthetic statement on your device…</p>}
+        {busy && (
+          <p role="status">
+            <TranslatedText text={t('Reading the synthetic statement on your device…')} />
+          </p>
+        )}
         {error && (
           <p className="error-message" role="alert">
             {error}
@@ -38,31 +51,53 @@ export function Home({
         )}
       </section>
       <section className="home-ledger" aria-labelledby="ledger-preview-title">
-        <h2 id="ledger-preview-title">Your statement</h2>
+        <h2 id="ledger-preview-title">
+          <TranslatedText text={t('Your statement')} />
+        </h2>
         <dl className="ledger-figures">
           <div>
-            <dt>Money in</dt>
-            <dd>Not imported</dd>
+            <dt>
+              <TranslatedText text={t('Money in')} />
+            </dt>
+            <dd>
+              <TranslatedText text={t('Not imported')} />
+            </dd>
           </div>
           <div>
-            <dt>Money out</dt>
-            <dd>Not imported</dd>
+            <dt>
+              <TranslatedText text={t('Money out')} />
+            </dt>
+            <dd>
+              <TranslatedText text={t('Not imported')} />
+            </dd>
           </div>
           <div>
-            <dt>Net change</dt>
-            <dd>Not imported</dd>
+            <dt>
+              <TranslatedText text={t('Net change')} />
+            </dt>
+            <dd>
+              <TranslatedText text={t('Not imported')} />
+            </dd>
           </div>
         </dl>
-        <div className="table-scroll" tabIndex={0} role="region" aria-label="Scrollable table">
+        <div className="table-scroll" tabIndex={0} role="region" aria-label={t('Scrollable table')}>
           <table className="data-table">
-            <caption>No statement selected</caption>
+            <caption>
+              <TranslatedText text={t('No statement selected')} />
+            </caption>
             <thead>
               <tr>
-                <th scope="col">Date</th>
-                <th scope="col">Counterparty</th>
-                <th scope="col">Category</th>
+                <th scope="col">
+                  <TranslatedText text={t('Date')} />
+                </th>
+                <th scope="col">
+                  <TranslatedText text={t('Counterparty')} />
+                </th>
+                <th scope="col">
+                  <TranslatedText text={t('Category')} />
+                </th>
                 <th scope="col" className="numeric">
-                  Amount
+                  <TranslatedText text={t('Amount')} />
                 </th>
               </tr>
             </thead>
@@ -70,28 +105,42 @@ export function Home({
           </table>
         </div>
         <p className="table-empty-note">
-          Your transactions will appear here after import. Your file is read locally and is never
-          uploaded.
+          <TranslatedText
+            text={t(
+              'Your transactions will appear here after import. Your file is read locally and is never uploaded.',
+            )}
+          />
         </p>
       </section>
       <section className="home-notes">
         <div>
-          <h2>Get your statement</h2>
+          <h2>
+            <TranslatedText text={t('Get your statement')} />
+          </h2>
           <p>
-            Save an electronic PDF or CSV from your provider. Scanned images cannot be read yet.
+            <TranslatedText
+              text={t(
+                'Save an electronic PDF or CSV from your provider. Scanned images cannot be read yet.',
+              )}
+            />
           </p>
           <button className="text-link" onClick={() => navigate('about')}>
-            Statement instructions
+            <TranslatedText text={t('Statement instructions')} />
           </button>
         </div>
         <div>
-          <h2>Keep control of your data</h2>
+          <h2>
+            <TranslatedText text={t('Keep control of your data')} />
+          </h2>
           <p>
-            Session-only by default. Saving on this browser is optional, and you can delete saved
-            data at any time.
+            <TranslatedText
+              text={t(
+                'Session-only by default. Saving on this browser is optional, and you can delete saved data at any time.',
+              )}
+            />
           </p>
           <button className="text-link" onClick={() => navigate('privacy')}>
-            Privacy and storage
+            <TranslatedText text={t('Privacy and storage')} />
           </button>
         </div>
       </section>

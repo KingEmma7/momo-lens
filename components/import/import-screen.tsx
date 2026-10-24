@@ -1,7 +1,9 @@
 'use client';
-import { useRef, useState, type ChangeEvent } from 'react';
+import { useI18n, TranslatedText } from '@/lib/i18n/react';
+import { useEffect, useRef, useState, type ChangeEvent } from 'react';
 import type { Settings, ParseResult, ColumnMapping } from '@/lib/parsers/types';
-import { parseFile } from '@/lib/parse-client';
+import { mappingColumnKeys } from '@/lib/i18n';
+import { closeParser, parseFile, warmParser } from '@/lib/parse-client';
 import { PageHeading, ProviderGuide } from '@/components/ui/shared';
 
 export function ImportScreen({
@@ -21,7 +23,35 @@ export function ImportScreen({
   settings: Settings;
   setSettings: (s: Settings) => void;
 }) {
+  const { t, translateSystemMessage } = useI18n();
   const [busy, setBusy] = useState(false);
+  const [restarting, setRestarting] = useState(false);
+  const requestId = useRef(0);
+  const activeParsing = useRef(false);
+  useEffect(
+    () => () => {
+      if (activeParsing.current) {
+        ++requestId.current;
+        closeParser();
+      }
+    },
+    [],
+  );
+  const cancelParsing = () => {
+    ++requestId.current;
+    activeParsing.current = false;
+    closeParser();
+    setBusy(false);
+    setProgress(0);
+    setError(t('Reading cancelled. Choose a statement to try again.'));
+    setRestarting(true);
+    void warmParser().then(
+      () => setRestarting(false),
+      () => {
+        setError(t('The file reader could not restart. Refresh this page and try again.'));
+      },
+    );
+  };
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState('');
   const [dragging, setDragging] = useState(false);
@@ -35,12 +65,20 @@ export function ImportScreen({
     selected: File,
     options: { password?: string; mapping?: ColumnMapping } = {},
   ) => {
+    const request = ++requestId.current;
+    activeParsing.current = true;
     setFile(selected);
     setBusy(true);
     setError('');
     setProgress(0);
     try {
-      const result = await parseFile(selected, { ...options, onProgress: setProgress });
+      const result = await parseFile(selected, {
+        ...options,
+        onProgress: (value) => {
+          if (request === requestId.current) setProgress(value);
+        },
+      });
+      if (request !== requestId.current) return;
       setPasswordNeeded(false);
       setPassword('');
       if (result.needsMapping) {
@@ -49,22 +87,29 @@ export function ImportScreen({
         return;
       }
       if (!result.transactions.length) {
-        setError('No transactions were found. Try a CSV export, or check the statement period.');
+        setError(t('No transactions were found. Try a CSV export, or check the statement period.'));
         return;
       }
+      activeParsing.current = false;
       onComplete(result);
     } catch (cause) {
+      if (request !== requestId.current) return;
       const code = cause && typeof cause === 'object' && 'code' in cause ? cause.code : '';
       if (code === 'PASSWORD_REQUIRED' || code === 'PASSWORD_INCORRECT') {
         setPasswordNeeded(true);
         if (code === 'PASSWORD_INCORRECT')
-          setError('That password did not unlock this PDF. Try again.');
+          setError(t('That password did not unlock this PDF. Try again.'));
       } else
         setError(
-          cause instanceof Error ? cause.message : 'This file could not be read. Try a CSV export.',
+          cause instanceof Error
+            ? translateSystemMessage(cause.message)
+            : t('This file could not be read. Try a CSV export.'),
         );
     } finally {
-      setBusy(false);
+      if (request === requestId.current) {
+        activeParsing.current = false;
+        setBusy(false);
+      }
     }
   };
   const fileChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -75,23 +120,27 @@ export function ImportScreen({
   return (
     <>
       <PageHeading
-        title="Import statement"
-        description="Read a PDF or CSV from MTN MoMo or Telecel Cash."
+        title={t('Import statement')}
+        description={t('Read a PDF or CSV from MTN MoMo or Telecel Cash.')}
       />
       <div className="import-layout">
         <div>
           <section className="panel import-panel">
             <div className="panel-title">
-              <h2>Choose your statement</h2>
-              <span className="local-label">Only on this device</span>
+              <h2>
+                <TranslatedText text={t('Choose your statement')} />
+              </h2>
+              <span className="local-label">
+                <TranslatedText text={t('Only on this device')} />
+              </span>
             </div>
             <input
               ref={fileRef}
               type="file"
               accept=".csv,.pdf,text/csv,application/pdf"
-              aria-label="Choose statement file"
+              aria-label={t('Choose statement file')}
               onChange={fileChange}
-              disabled={!workerReady || busy}
+              disabled={!workerReady || restarting || busy}
               className="visually-hidden"
             />
             <div
@@ -105,35 +154,66 @@ export function ImportScreen({
                 e.preventDefault();
                 setDragging(false);
                 const selected = e.dataTransfer.files[0];
-                if (selected && workerReady && !busy) void processFile(selected);
+                if (selected && workerReady && !restarting && !busy) void processFile(selected);
               }}
             >
-              <h3>{busy ? 'Reading your statement…' : 'Drop your statement here'}</h3>
+              <h3>
+                <TranslatedText
+                  text={busy ? t('Reading your statement…') : t('Drop your statement here')}
+                />
+              </h3>
               <p>
-                {busy
-                  ? 'Your file is being read privately on this device.'
-                  : 'or choose a file from your phone or computer'}
+                <TranslatedText
+                  text={
+                    busy
+                      ? t('Your file is being read privately on this device.')
+                      : t('or choose a file from your phone or computer')
+                  }
+                />
               </p>
               {busy ? (
                 <>
-                  <progress max="100" value={progress} aria-label="Statement parsing progress" />
-                  <p role="status">{Math.round(progress)}% read</p>
+                  <progress
+                    max="100"
+                    value={progress}
+                    aria-label={t('Statement parsing progress')}
+                  />
+                  <p role="status">
+                    <TranslatedText
+                      text={t('{progress}% read', { progress: Math.round(progress) })}
+                    />
+                  </p>
+                  <button className="button outline" onClick={cancelParsing}>
+                    <TranslatedText text={t('Cancel reading')} />
+                  </button>
                 </>
               ) : (
                 <button
                   className="button primary"
-                  disabled={!workerReady}
+                  disabled={!workerReady || restarting}
                   onClick={() => fileRef.current?.click()}
                 >
-                  Choose file
+                  <TranslatedText text={t('Choose file')} />
                 </button>
               )}
               <span className="file-types">
-                PDF or CSV <span>·</span> Up to 25 MB
+                <TranslatedText text={t('PDF or CSV ')} />
+                <span>
+                  <TranslatedText text={t('·')} />
+                </span>{' '}
+                <TranslatedText text={t('Up to 25 MB')} />
               </span>
             </div>
             <p className="reader-status" role="status">
-              {workerReady ? <>Ready to import</> : <>Getting your private file reader ready…</>}
+              {workerReady && !restarting ? (
+                <>
+                  <TranslatedText text={t('Ready to import')} />
+                </>
+              ) : (
+                <>
+                  <TranslatedText text={t('Getting your private file reader ready…')} />
+                </>
+              )}
             </p>
             {error && (
               <div className="error-message" role="alert">
@@ -148,7 +228,9 @@ export function ImportScreen({
                   if (file) void processFile(file, { password });
                 }}
               >
-                <label htmlFor="pdf-password">PDF password</label>
+                <label htmlFor="pdf-password">
+                  <TranslatedText text={t('PDF password')} />
+                </label>
                 <input
                   autoFocus
                   id="pdf-password"
@@ -158,9 +240,13 @@ export function ImportScreen({
                   autoComplete="off"
                   required
                 />
-                <p>Your password only unlocks this file on your device.</p>
+                <p>
+                  <TranslatedText
+                    text={t('Your password only unlocks this file on your device.')}
+                  />
+                </p>
                 <button className="button primary" disabled={busy}>
-                  Unlock PDF
+                  <TranslatedText text={t('Unlock PDF')} />
                 </button>
               </form>
             )}
@@ -170,18 +256,23 @@ export function ImportScreen({
                 onSubmit={(e) => {
                   e.preventDefault();
                   if (!mapping.amount && !mapping.debit && !mapping.credit) {
-                    setError('Choose an amount column, or debit and credit columns.');
+                    setError(t('Choose an amount column, or debit and credit columns.'));
                     return;
                   }
                   if (file) void processFile(file, { mapping });
                 }}
               >
                 <div className="mapping-title">
-                  <h3>Match your columns</h3>
+                  <h3>
+                    <TranslatedText text={t('Match your columns')} />
+                  </h3>
                 </div>
                 <p>
-                  This layout is new to us. Tell us which columns to use. Positive amounts are money
-                  in; negative amounts are money out.
+                  <TranslatedText
+                    text={t(
+                      'This layout is new to us. Tell us which columns to use. Positive amounts are money in; negative amounts are money out.',
+                    )}
+                  />
                 </p>
                 <div className="mapping-fields">
                   {(
@@ -196,15 +287,21 @@ export function ImportScreen({
                     ] as const
                   ).map((key) => (
                     <label key={key}>
-                      {key.charAt(0).toUpperCase() + key.slice(1)} column
+                      <TranslatedText text={t(mappingColumnKeys[key])} />
                       <select
-                        aria-label={`${key.charAt(0).toUpperCase() + key.slice(1)} column`}
+                        aria-label={t(mappingColumnKeys[key])}
                         value={mapping[key] || ''}
                         required={key === 'date' || key === 'description'}
                         onChange={(e) => setMapping({ ...mapping, [key]: e.target.value })}
                       >
                         <option value="">
-                          {key === 'date' || key === 'description' ? 'Choose a column' : 'Not used'}
+                          <TranslatedText
+                            text={
+                              key === 'date' || key === 'description'
+                                ? t('Choose a column')
+                                : t('Not used')
+                            }
+                          />
                         </option>
                         {mappingResult.columns?.map((column) => (
                           <option key={column}>{column}</option>
@@ -217,10 +314,12 @@ export function ImportScreen({
                   className="table-scroll"
                   tabIndex={0}
                   role="region"
-                  aria-label="Scrollable table"
+                  aria-label={t('Scrollable table')}
                 >
                   <table className="data-table">
-                    <caption>First rows from your file</caption>
+                    <caption>
+                      <TranslatedText text={t('First rows from your file')} />
+                    </caption>
                     <thead>
                       <tr>
                         {mappingResult.columns?.map((c) => (
@@ -240,7 +339,7 @@ export function ImportScreen({
                   </table>
                 </div>
                 <button className="button primary" disabled={busy}>
-                  Finish import
+                  <TranslatedText text={t('Finish import')} />
                 </button>
               </form>
             )}
@@ -251,19 +350,33 @@ export function ImportScreen({
                 onChange={(e) => setSettings({ ...settings, rememberOnDevice: e.target.checked })}
               />
               <span>
-                <strong>Remember on this device</strong>
-                <small>Optional. Otherwise your data disappears when you close this page.</small>
+                <strong>
+                  <TranslatedText text={t('Remember on this device')} />
+                </strong>
+                <small>
+                  <TranslatedText
+                    text={t('Optional. Otherwise your data disappears when you close this page.')}
+                  />
+                </small>
               </span>
             </label>
           </section>
           <section className="sample-panel">
             <span className="sample-panel-icon"></span>
             <div>
-              <h3>Explore a sample statement</h3>
-              <p>The sample contains synthetic transactions. Your saved data stays separate.</p>
+              <h3>
+                <TranslatedText text={t('Explore a sample statement')} />
+              </h3>
+              <p>
+                <TranslatedText
+                  text={t(
+                    'The sample contains synthetic transactions. Your saved data stays separate.',
+                  )}
+                />
+              </p>
             </div>
             <button className="button outline compact" onClick={loadSample} disabled={sampleBusy}>
-              {sampleBusy ? 'Loading…' : 'Load sample data'}
+              <TranslatedText text={sampleBusy ? t('Loading…') : t('Load sample data')} />
             </button>
           </section>
           {sampleError && (
@@ -273,18 +386,31 @@ export function ImportScreen({
           )}
         </div>
         <aside className="import-help">
-          <h2>Where do I find my statement?</h2>
+          <h2>
+            <TranslatedText text={t('Where do I find my statement?')} />
+          </h2>
           <ProviderGuide />
           <div className="help-note">
-            <h3>You’re in control.</h3>
+            <h3>
+              <TranslatedText text={t('You’re in control.')} />
+            </h3>
             <p>
-              We read your statement inside your browser. Your file, password and transactions never
-              leave this device.
+              <TranslatedText
+                text={t(
+                  'We read your statement inside your browser. Your file, password and transactions never leave this device.',
+                )}
+              />
             </p>
-            <span>No connection to your MoMo account.</span>
+            <span>
+              <TranslatedText text={t('No connection to your MoMo account.')} />
+            </span>
           </div>
           <p className="support-note">
-            Scanned PDF? Ask your provider for a text PDF or CSV. Photos cannot be read yet.
+            <TranslatedText
+              text={t(
+                'Scanned PDF? Ask your provider for a text PDF or CSV. Photos cannot be read yet.',
+              )}
+            />
           </p>
         </aside>
       </div>

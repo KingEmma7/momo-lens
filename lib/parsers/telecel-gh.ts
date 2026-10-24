@@ -8,6 +8,7 @@ import type { StatementParser } from './types';
 export const telecelParser: StatementParser = {
   id: 'telecel-gh',
   detect(file, text) {
+    // ASSUMPTION: provider branding plus recognised structural headers is a detection heuristic, not provider authentication.
     const brand = /telecel|vodafone/i.test(`${file.name} ${text.slice(0, 1500)}`);
     const mapping = guessMapping(
       readTable({ name: file.name, text, kind: /\.pdf$/i.test(file.name) ? 'pdf' : 'csv' }).columns,

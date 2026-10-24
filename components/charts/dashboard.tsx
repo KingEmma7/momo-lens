@@ -1,4 +1,5 @@
 'use client';
+import { useI18n, TranslatedText } from '@/lib/i18n/react';
 import { useMemo, useState } from 'react';
 import dynamic from 'next/dynamic';
 import type { Transaction } from '@/lib/parsers/types';
@@ -7,9 +8,18 @@ import type { View } from '@/lib/ui-types';
 import { currency, shortDate, monthLabel } from '@/components/ui/shared';
 import { TransactionLedger } from '@/components/review/review-screen';
 
+function ChartLoading() {
+  const { t } = useI18n();
+  return (
+    <p role="status">
+      <TranslatedText text={t('Loading chart…')} />
+    </p>
+  );
+}
+
 const MonthlyChart = dynamic(() => import('@/components/charts/monthly-chart'), {
   ssr: false,
-  loading: () => <p role="status">Loading chart…</p>,
+  loading: ChartLoading,
 });
 
 export function Dashboard({
@@ -23,6 +33,7 @@ export function Dashboard({
   sample: boolean;
   recategorise?: (id: string, categoryId: string, all: boolean) => void;
 }) {
+  const { t } = useI18n();
   const [period, setPeriod] = useState('all');
   const [monthTable, setMonthTable] = useState(false);
   const [categoryTable, setCategoryTable] = useState(false);
@@ -42,11 +53,15 @@ export function Dashboard({
     return (
       <>
         <div className="ledger-heading">
-          <h1>Let’s make sense of your MoMo.</h1>
-          <p>Import a statement to see your transactions and totals.</p>
+          <h1>
+            <TranslatedText text={t('Let’s make sense of your MoMo.')} />
+          </h1>
+          <p>
+            <TranslatedText text={t('Import a statement to see your transactions and totals.')} />
+          </p>
         </div>
         <button className="button primary" onClick={() => navigate('import')}>
-          Import statement
+          <TranslatedText text={t('Import statement')} />
         </button>
       </>
     );
@@ -54,21 +69,29 @@ export function Dashboard({
     <>
       <div className="ledger-heading">
         <div>
-          <h1>Your money, at a glance.</h1>
+          <h1>
+            <TranslatedText text={t('Your money, at a glance.')} />
+          </h1>
           <p>
-            {sample
-              ? 'Synthetic sample data. Import your statement to see your own figures.'
-              : 'Transactions and totals from your imported statements.'}
+            <TranslatedText
+              text={
+                sample
+                  ? t('Synthetic sample data. Import your statement to see your own figures.')
+                  : t('Transactions and totals from your imported statements.')
+              }
+            />
           </p>
         </div>
         <label className="form-label">
-          Statement period
+          <TranslatedText text={t('Statement period')} />
           <select
-            aria-label="Statement period"
+            aria-label={t('Statement period')}
             value={period}
             onChange={(event) => setPeriod(event.target.value)}
           >
-            <option value="all">All time</option>
+            <option value="all">
+              <TranslatedText text={t('All time')} />
+            </option>
             {months.map((month) => (
               <option key={month} value={month}>
                 {monthLabel(month)}
@@ -78,57 +101,95 @@ export function Dashboard({
         </label>
       </div>
       <p className="ledger-period">
-        {shortDate(stats.periodStart)} to {shortDate(stats.periodEnd)} · {filtered.length}{' '}
-        transactions
+        <TranslatedText
+          text={t('{start} to {end} · {count} transactions', {
+            start: shortDate(stats.periodStart),
+            end: shortDate(stats.periodEnd),
+            count: filtered.length,
+          })}
+        />
       </p>
       <dl className="ledger-figures">
         <div>
-          <dt>Money in</dt>
+          <dt>
+            <TranslatedText text={t('Money in')} />
+          </dt>
           <dd>{currency(stats.totalIn)}</dd>
         </div>
         <div>
-          <dt>Money out</dt>
+          <dt>
+            <TranslatedText text={t('Money out')} />
+          </dt>
           <dd>{currency(stats.totalOut)}</dd>
         </div>
         <div>
-          <dt>Net</dt>
+          <dt>
+            <TranslatedText text={t('Net')} />
+          </dt>
           <dd>{currency(stats.net)}</dd>
         </div>
       </dl>
       <section className="ledger-section" aria-labelledby="overview-transactions">
         <div className="ledger-section-heading">
-          <h2 id="overview-transactions">Transactions</h2>
+          <h2 id="overview-transactions">
+            <TranslatedText text={t('Transactions')} />
+          </h2>
           <button className="small-text-button" onClick={() => navigate('review')}>
-            Edit categories
+            <TranslatedText text={t('Edit categories')} />
           </button>
         </div>
         <TransactionLedger transactions={filtered} recategorise={recategorise} />
       </section>
       <section className="ledger-section" aria-labelledby="monthly-heading">
         <div className="ledger-section-heading">
-          <h2 id="monthly-heading">Monthly money in and out</h2>
+          <h2 id="monthly-heading">
+            <TranslatedText text={t('Monthly money in and out')} />
+          </h2>
           <button
             className="small-text-button"
             onClick={() => setMonthTable(!monthTable)}
             aria-expanded={monthTable}
           >
-            {monthTable ? 'View chart' : 'View as table'}
+            <TranslatedText text={monthTable ? t('View chart') : t('View as table')} />
           </button>
         </div>
         <p>
-          Across {stats.months.length} months, {currency(stats.totalIn)} came in and{' '}
-          {currency(stats.totalOut)} went out. Money out includes fees and levies.
+          <TranslatedText
+            text={t(
+              'Across {months} months, {incoming} came in and {outgoing} went out. Money out includes fees and levies.',
+              {
+                months: stats.months.length,
+                incoming: currency(stats.totalIn),
+                outgoing: currency(stats.totalOut),
+              },
+            )}
+          />
         </p>
         {monthTable ? (
-          <div className="table-scroll" tabIndex={0} role="region" aria-label="Scrollable table">
+          <div
+            className="table-scroll"
+            tabIndex={0}
+            role="region"
+            aria-label={t('Scrollable table')}
+          >
             <table className="data-table">
-              <caption>Monthly money in and out, including fees</caption>
+              <caption>
+                <TranslatedText text={t('Monthly money in and out, including fees')} />
+              </caption>
               <thead>
                 <tr>
-                  <th scope="col">Month</th>
-                  <th scope="col">Money in</th>
-                  <th scope="col">Money out</th>
-                  <th scope="col">Net</th>
+                  <th scope="col">
+                    <TranslatedText text={t('Month')} />
+                  </th>
+                  <th scope="col">
+                    <TranslatedText text={t('Money in')} />
+                  </th>
+                  <th scope="col">
+                    <TranslatedText text={t('Money out')} />
+                  </th>
+                  <th scope="col">
+                    <TranslatedText text={t('Net')} />
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -151,38 +212,63 @@ export function Dashboard({
       </section>
       <section className="ledger-section" aria-labelledby="category-heading">
         <div className="ledger-section-heading">
-          <h2 id="category-heading">Spending by category</h2>
+          <h2 id="category-heading">
+            <TranslatedText text={t('Spending by category')} />
+          </h2>
           <button
             className="small-text-button"
             onClick={() => setCategoryTable(!categoryTable)}
             aria-expanded={categoryTable}
           >
-            {categoryTable ? 'View chart' : 'View as table'}
+            <TranslatedText text={categoryTable ? t('View chart') : t('View as table')} />
           </button>
         </div>
-        <p>Categories total {currency(stats.totalOut)}, including explicit fees and levies.</p>
-        <div className="table-scroll" tabIndex={0} role="region" aria-label="Scrollable table">
+        <p>
+          <TranslatedText
+            text={t('Categories total {amount}, including explicit fees and levies.', {
+              amount: currency(stats.totalOut),
+            })}
+          />
+        </p>
+        <div className="table-scroll" tabIndex={0} role="region" aria-label={t('Scrollable table')}>
           <table className="data-table">
-            <caption>Outgoing categories</caption>
+            <caption>
+              <TranslatedText text={t('Outgoing categories')} />
+            </caption>
             <thead>
               <tr>
-                <th scope="col">Category</th>
-                <th scope="col">Amount</th>
-                <th scope="col">Share</th>
-                {!categoryTable && <th scope="col">Relative amount</th>}
+                <th scope="col">
+                  <TranslatedText text={t('Category')} />
+                </th>
+                <th scope="col">
+                  <TranslatedText text={t('Amount')} />
+                </th>
+                <th scope="col">
+                  <TranslatedText text={t('Share')} />
+                </th>
+                {!categoryTable && (
+                  <th scope="col">
+                    <TranslatedText text={t('Relative amount')} />
+                  </th>
+                )}
               </tr>
             </thead>
             <tbody>
               {categories.map((category) => (
                 <tr key={category.id}>
-                  <th scope="row">{category.label}</th>
+                  <th scope="row">
+                    <TranslatedText text={t(category.labelKey)} />
+                  </th>
                   <td>{currency(category.amount)}</td>
                   <td>
-                    {stats.totalOut ? Math.round((category.amount / stats.totalOut) * 100) : 0}%
+                    {stats.totalOut ? Math.round((category.amount / stats.totalOut) * 100) : 0}
+                    <TranslatedText text={t('%')} />
                   </td>
                   {!categoryTable && (
                     <td
-                      aria-label={`${Math.round((category.amount / largestCategory) * 100)}% of largest category`}
+                      aria-label={t('{value1}% of largest category', {
+                        value1: Math.round((category.amount / largestCategory) * 100),
+                      })}
                     >
                       <div className="ledger-bar-track">
                         <span
@@ -204,35 +290,53 @@ export function Dashboard({
         </div>
       </section>
       <section className="ledger-section" aria-labelledby="mobile-spend-heading">
-        <h2 id="mobile-spend-heading">Data, airtime and charges</h2>
-        <div className="table-scroll" tabIndex={0} role="region" aria-label="Scrollable table">
+        <h2 id="mobile-spend-heading">
+          <TranslatedText text={t('Data, airtime and charges')} />
+        </h2>
+        <div className="table-scroll" tabIndex={0} role="region" aria-label={t('Scrollable table')}>
           <table className="data-table">
-            <caption>Mobile spending and explicit charges</caption>
+            <caption>
+              <TranslatedText text={t('Mobile spending and explicit charges')} />
+            </caption>
             <thead>
               <tr>
-                <th scope="col">Item</th>
-                <th scope="col">Amount</th>
+                <th scope="col">
+                  <TranslatedText text={t('Item')} />
+                </th>
+                <th scope="col">
+                  <TranslatedText text={t('Amount')} />
+                </th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <th scope="row">Data bundles</th>
+                <th scope="row">
+                  <TranslatedText text={t('Data bundles')} />
+                </th>
                 <td>{currency(stats.dataSpend)}</td>
               </tr>
               <tr>
-                <th scope="row">Airtime</th>
+                <th scope="row">
+                  <TranslatedText text={t('Airtime')} />
+                </th>
                 <td>{currency(stats.airtimeSpend)}</td>
               </tr>
               <tr>
-                <th scope="row">Fees</th>
+                <th scope="row">
+                  <TranslatedText text={t('Fees')} />
+                </th>
                 <td>{currency(stats.totalFees)}</td>
               </tr>
               <tr>
-                <th scope="row">Levies</th>
+                <th scope="row">
+                  <TranslatedText text={t('Levies')} />
+                </th>
                 <td>{currency(stats.totalLevy)}</td>
               </tr>
               <tr>
-                <th scope="row">Fees & levies</th>
+                <th scope="row">
+                  <TranslatedText text={t('Fees & levies')} />
+                </th>
                 <td>{currency(stats.totalFees + stats.totalLevy)}</td>
               </tr>
             </tbody>
@@ -240,20 +344,30 @@ export function Dashboard({
         </div>
       </section>
       <section className="ledger-section" aria-labelledby="recipients-heading">
-        <h2 id="recipients-heading">Top recipients</h2>
-        <div className="table-scroll" tabIndex={0} role="region" aria-label="Scrollable table">
+        <h2 id="recipients-heading">
+          <TranslatedText text={t('Top recipients')} />
+        </h2>
+        <div className="table-scroll" tabIndex={0} role="region" aria-label={t('Scrollable table')}>
           <table className="data-table">
-            <caption>Up to ten recipients, ranked by transfer amount</caption>
+            <caption>
+              <TranslatedText text={t('Up to ten recipients, ranked by transfer amount')} />
+            </caption>
             <thead>
               <tr>
-                <th scope="col">Recipient</th>
-                <th scope="col">Transfers</th>
-                <th scope="col">Amount</th>
+                <th scope="col">
+                  <TranslatedText text={t('Recipient')} />
+                </th>
+                <th scope="col">
+                  <TranslatedText text={t('Transfers')} />
+                </th>
+                <th scope="col">
+                  <TranslatedText text={t('Amount')} />
+                </th>
               </tr>
             </thead>
             <tbody>
               {stats.recipients.map((person) => (
-                <tr key={person.name}>
+                <tr key={person.key}>
                   <th scope="row">{person.name}</th>
                   <td>{person.count}</td>
                   <td>{currency(person.amount)}</td>
@@ -261,7 +375,9 @@ export function Dashboard({
               ))}
               {!stats.recipients.length && (
                 <tr>
-                  <td colSpan={3}>No outgoing transfers in this period.</td>
+                  <td colSpan={3}>
+                    <TranslatedText text={t('No outgoing transfers in this period.')} />
+                  </td>
                 </tr>
               )}
             </tbody>
@@ -269,20 +385,30 @@ export function Dashboard({
         </div>
       </section>
       <section className="ledger-section" aria-labelledby="senders-heading">
-        <h2 id="senders-heading">Top senders</h2>
-        <div className="table-scroll" tabIndex={0} role="region" aria-label="Scrollable table">
+        <h2 id="senders-heading">
+          <TranslatedText text={t('Top senders')} />
+        </h2>
+        <div className="table-scroll" tabIndex={0} role="region" aria-label={t('Scrollable table')}>
           <table className="data-table">
-            <caption>Up to ten senders, ranked by transfer amount</caption>
+            <caption>
+              <TranslatedText text={t('Up to ten senders, ranked by transfer amount')} />
+            </caption>
             <thead>
               <tr>
-                <th scope="col">Sender</th>
-                <th scope="col">Transfers</th>
-                <th scope="col">Amount</th>
+                <th scope="col">
+                  <TranslatedText text={t('Sender')} />
+                </th>
+                <th scope="col">
+                  <TranslatedText text={t('Transfers')} />
+                </th>
+                <th scope="col">
+                  <TranslatedText text={t('Amount')} />
+                </th>
               </tr>
             </thead>
             <tbody>
               {stats.senders.map((person) => (
-                <tr key={person.name}>
+                <tr key={person.key}>
                   <th scope="row">{person.name}</th>
                   <td>{person.count}</td>
                   <td>{currency(person.amount)}</td>
@@ -290,7 +416,9 @@ export function Dashboard({
               ))}
               {!stats.senders.length && (
                 <tr>
-                  <td colSpan={3}>No incoming transfers in this period.</td>
+                  <td colSpan={3}>
+                    <TranslatedText text={t('No incoming transfers in this period.')} />
+                  </td>
                 </tr>
               )}
             </tbody>
@@ -298,16 +426,30 @@ export function Dashboard({
         </div>
       </section>
       <section className="ledger-section" aria-labelledby="biggest-spends-heading">
-        <h2 id="biggest-spends-heading">Biggest single spends</h2>
-        <div className="table-scroll" tabIndex={0} role="region" aria-label="Scrollable table">
+        <h2 id="biggest-spends-heading">
+          <TranslatedText text={t('Biggest single spends')} />
+        </h2>
+        <div className="table-scroll" tabIndex={0} role="region" aria-label={t('Scrollable table')}>
           <table className="data-table">
-            <caption>Up to five outgoing transactions, ranked by principal amount</caption>
+            <caption>
+              <TranslatedText
+                text={t('Up to five outgoing transactions, ranked by principal amount')}
+              />
+            </caption>
             <thead>
               <tr>
-                <th scope="col">Date</th>
-                <th scope="col">Transaction</th>
-                <th scope="col">Amount</th>
-                <th scope="col">Fees & levies</th>
+                <th scope="col">
+                  <TranslatedText text={t('Date')} />
+                </th>
+                <th scope="col">
+                  <TranslatedText text={t('Transaction')} />
+                </th>
+                <th scope="col">
+                  <TranslatedText text={t('Amount')} />
+                </th>
+                <th scope="col">
+                  <TranslatedText text={t('Fees & levies')} />
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -325,10 +467,10 @@ export function Dashboard({
       </section>
       <div className="ledger-actions">
         <button className="button outline" onClick={() => navigate('review')}>
-          See all transactions
+          <TranslatedText text={t('See all transactions')} />
         </button>
         <button className="button outline" onClick={() => navigate('wrapped')}>
-          Create MoMo Wrapped
+          <TranslatedText text={t('Create MoMo Wrapped')} />
         </button>
       </div>
     </>

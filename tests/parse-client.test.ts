@@ -100,3 +100,29 @@ describe('worker client startup and failures', () => {
     });
   });
 });
+
+it('settles an active parse immediately when cancelled and can restart', async () => {
+  mocks.parse.mockImplementationOnce(() => new Promise(() => undefined));
+  const client = await import('../lib/parse-client');
+  let failure: unknown;
+  void client.parseFile(new File(['synthetic'], 'synthetic.csv')).catch((error: unknown) => {
+    failure = error;
+  });
+  await vi.waitFor(() => expect(mocks.parse).toHaveBeenCalledTimes(1));
+  client.closeParser();
+  await vi.advanceTimersByTimeAsync(0);
+  expect(failure).toMatchObject({ code: 'CANCELLED' });
+  expect(mocks.terminate).toHaveBeenCalledTimes(1);
+  await client.warmParser();
+  expect(workers).toHaveLength(2);
+});
+
+it('does not resurrect a worker when cancellation lands between warmup and the parse continuation', async () => {
+  const client = await import('../lib/parse-client');
+  await client.warmParser();
+  const pending = client.parseFile(new File(['synthetic'], 'synthetic.csv'));
+  queueMicrotask(() => client.closeParser());
+  await expect(pending).rejects.toMatchObject({ code: 'CANCELLED' });
+  expect(workers).toHaveLength(1);
+  expect(mocks.parse).not.toHaveBeenCalled();
+});

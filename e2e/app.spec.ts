@@ -121,6 +121,16 @@ test('sample dashboard, charts, transactions, and Wrapped are usable', async ({ 
   await expect(page.getByText(/money in/i).first()).toBeVisible();
   await expect(page.getByText(/money out/i).first()).toBeVisible();
   await expect(page.locator('.monthly-chart .recharts-surface')).toBeVisible({ timeout: 15_000 });
+  expect(await seriousAccessibilityIssues(page)).toEqual([]);
+  const touchTargets = await page
+    .locator('.small-text-button, .ledger-category, .notice button, .brand-link')
+    .evaluateAll((elements) =>
+      elements.map((element) => {
+        const { width, height } = element.getBoundingClientRect();
+        return { width, height };
+      }),
+    );
+  expect(touchTargets.every(({ width, height }) => width >= 44 && height >= 44)).toBe(true);
   await expect(page.locator('dl.ledger-figures dd')).toHaveCount(3);
   const ledger = page.getByRole('table', { name: 'Transactions', exact: true });
   await expect(ledger.getByRole('columnheader')).toHaveCount(4);
@@ -162,6 +172,9 @@ test('unknown CSV reaches a column mapper and imports three transactions', async
   await expect(page.locator('input[type=file]')).toBeEnabled({ timeout: 30_000 });
   await page.locator('input[type=file]').setInputFiles(fixture('unknown-layout.csv'));
   await expect(page.getByRole('heading', { name: /match your columns/i })).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(
+    true,
+  );
   await page.getByLabel('Date column', { exact: true }).selectOption('When');
   await page.getByLabel('Description column', { exact: true }).selectOption('What happened');
   await page.getByLabel('Amount column', { exact: true }).selectOption('Money');

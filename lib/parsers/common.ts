@@ -1,4 +1,7 @@
+import { t } from '../i18n/index';
 import Papa from 'papaparse';
+import { canonicalTransactionId, stableHash } from '../identity';
+export { stableHash } from '../identity';
 import { z } from 'zod';
 import { parseDate } from '../dates';
 import { parseMoney, pesewas } from '../money';
@@ -12,13 +15,6 @@ import type {
   Transaction,
 } from './types';
 
-// ASSUMPTION: a deterministic 64-bit row hash identifies duplicate imports; identical reference-free rows remain ambiguous.
-export function stableHash(value: string): string {
-  let hash = 0xcbf29ce484222325n;
-  for (let index = 0; index < value.length; index += 1)
-    hash = BigInt.asUintN(64, (hash ^ BigInt(value.charCodeAt(index))) * 0x100000001b3n);
-  return hash.toString(16).padStart(16, '0');
-}
 export const normalHeader = (value: string): string =>
   value.toLowerCase().replace(/[^a-z0-9]/g, '');
 const ALIASES: Record<string, string[]> = {
@@ -74,6 +70,7 @@ export function readTable(input: ParseInput): ParsedTable {
       .filter((line) => line.trim())
       .map(splitLine);
   }
+  // ASSUMPTION: a recognised header can follow a title; unknown CSV layouts use the first row as their header.
   const headerIndex = rows.findIndex((row) => {
     const normalized = row.map(normalHeader);
     return (
@@ -165,7 +162,9 @@ export function parseTable(input: ParseInput, provider: Provider): ParseResult {
     };
   const internal = mapping as InternalMapping;
   if (new Set(table.columns).size !== table.columns.length) {
-    session.warnings.push('Some column names repeat. Rename duplicate CSV headers before mapping.');
+    session.warnings.push(
+      t('Some column names repeat. Rename duplicate CSV headers before mapping.'),
+    );
     return {
       transactions: [],
       session,
@@ -185,7 +184,7 @@ export function parseTable(input: ParseInput, provider: Provider): ParseResult {
     required.some((column) => !table.columns.includes(column ?? '')) ||
     (!mapping.amount && !mapping.debit && !mapping.credit)
   ) {
-    session.warnings.push('Choose existing date, description and amount columns.');
+    session.warnings.push(t('Choose existing date, description and amount columns.'));
     return {
       transactions: [],
       session,
@@ -221,7 +220,11 @@ export function parseTable(input: ParseInput, provider: Provider): ParseResult {
       } else if (pending && row.length < table.columns.length) {
         const index = table.columns.indexOf(mapping.description);
         pending[index] = `${pending[index] ?? ''} ${row.join(' ')}`.trim();
-      } else if (!pending) pdfRows.push(row);
+      } else {
+        if (pending) pdfRows.push(pending);
+        pending = undefined;
+        pdfRows.push(row);
+      }
     }
     if (pending) pdfRows.push(pending);
   }
@@ -234,30 +237,33 @@ export function parseTable(input: ParseInput, provider: Provider): ParseResult {
     if (status && !/^(completed|successful|success|complete)$/i.test(status)) {
       session.skippedRows.push({
         row: index + table.rowOffset,
-        reason: 'Transaction was not completed.',
+        reason: t('Transaction was not completed.'),
       });
       return;
     }
     try {
       const rawDescription = maskPhone(cell(mapping.description));
-      if (!rawDescription) throw new Error('Description is missing.');
+      if (!rawDescription) throw new Error(t('Description is missing.'));
       const date = parseDate(cell(mapping.date));
       const debit = parseMoney(cell(mapping.debit));
       const credit = parseMoney(cell(mapping.credit));
-      if (debit !== 0 && credit !== 0) throw new Error('Both debit and credit have values.');
+      if (debit !== 0 && credit !== 0) throw new Error(t('Both debit and credit have values.'));
+      // ASSUMPTION: signed Amount supplies direction; separate Debit/Credit labels supply direction regardless of sign.
       const signed = mapping.amount
         ? parseMoney(cell(mapping.amount))
         : credit !== 0
           ? Math.abs(credit)
           : -Math.abs(debit);
       const amount = pesewas(Math.abs(signed));
+      // ASSUMPTION: explicit fee and levy columns are additional charges, not already included in principal.
       const fee = pesewas(Math.abs(parseMoney(cell(internal.fee))));
       const levy = pesewas(Math.abs(parseMoney(cell(internal.levy))));
       const direction =
         signed < 0 || (signed === 0 && fee + levy > 0) ? ('out' as const) : ('in' as const);
       if (amount === 0 && fee === 0 && levy === 0)
-        throw new Error('Row contains no money movement.');
+        throw new Error(t('Row contains no money movement.'));
       rowSchema.parse({ date, amount, fee, levy, direction });
+      // ASSUMPTION: an explicit counterparty column supplies the name; Ghana phone patterns may also appear in the description.
       const counterpartyRaw = cell(mapping.counterparty);
       const phone =
         counterpartyRaw.match(PHONE)?.[0] ??
@@ -269,6 +275,7 @@ export function parseTable(input: ParseInput, provider: Provider): ParseResult {
         .trim();
       const reference = cell(internal.reference);
       const type = inferType(rawDescription);
+      // ASSUMPTION: reference-free identity uses charges and original narrative/contact text; indistinguishable rows cannot be separated.
       const transaction: Transaction = {
         id: stableHash(
           JSON.stringify([
@@ -296,23 +303,32 @@ export function parseTable(input: ParseInput, provider: Provider): ParseResult {
       const balance = cell(mapping.balance);
       if (balance) transaction.balanceAfter = parseMoney(balance);
       if (counterpartyName) transaction.counterpartyName = counterpartyName;
-      if (phone) transaction.counterpartyMasked = maskPhone(phone);
+      if (phone) {
+        transaction.counterpartyMasked = maskPhone(phone);
+        const normalisedPhone = phone.replace(/\D/g, '').replace(/^2330?/, '0');
+        transaction.counterpartyKey = stableHash(`phone:${normalisedPhone}`);
+      } else if (counterpartyName) {
+        transaction.counterpartyKey = stableHash(
+          `name:${counterpartyName.toLocaleLowerCase('en')}`,
+        );
+      }
       if (reference) transaction.reference = reference;
+      transaction.id = canonicalTransactionId(transaction);
       transactions.push(categorise(transaction));
     } catch (error) {
       const safeMessages = [
-        'Description is missing.',
-        'Both debit and credit have values.',
-        'Row contains no money movement.',
-        'Date is not recognised. Use day/month/year or ISO dates.',
-        'Date is outside the valid calendar.',
-        'Amount is not a valid cedi value.',
-        'Money must be a safe integer number of pesewas.',
+        t('Description is missing.'),
+        t('Both debit and credit have values.'),
+        t('Row contains no money movement.'),
+        t('Date is not recognised. Use day/month/year or ISO dates.'),
+        t('Date is outside the valid calendar.'),
+        t('Amount is not a valid cedi value.'),
+        t('Money must be a safe integer number of pesewas.'),
       ];
       const reason =
         error instanceof Error && safeMessages.includes(error.message)
           ? error.message
-          : 'Row has an invalid date or amount.';
+          : t('Row has an invalid date or amount.');
       session.skippedRows.push({ row: index + table.rowOffset, reason });
     }
   });
@@ -320,14 +336,18 @@ export function parseTable(input: ParseInput, provider: Provider): ParseResult {
     ...new Map(transactions.map((transaction) => [transaction.id, transaction])).values(),
   ].sort((a, b) => b.date.localeCompare(a.date));
   if (unique.length !== transactions.length)
-    session.warnings.push(`${transactions.length - unique.length} duplicate rows were removed.`);
+    session.warnings.push(
+      t('{count} duplicate rows were removed.', 'en', {
+        count: transactions.length - unique.length,
+      }),
+    );
   session.parsedCount = unique.length;
   session.periodStart = unique.at(-1)?.date ?? '';
   session.periodEnd = unique[0]?.date ?? '';
   session.id = stableHash(`${provider}|${input.text}`);
   if (provider !== 'generic')
     session.warnings.push(
-      'Parser uses a documented synthetic layout. Check the results against your statement.',
+      t('Parser uses a documented synthetic layout. Check the results against your statement.'),
     );
   if (unique.length === 0 && table.rows.length > 0)
     return {

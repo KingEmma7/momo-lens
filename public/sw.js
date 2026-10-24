@@ -19,7 +19,8 @@ self.addEventListener('install', (event) => {
       const assets = response.ok ? await response.json() : BASE_ASSETS;
       const cache = await caches.open(CACHE_NAME);
       await cache.addAll(assets);
-      await self.skipWaiting();
+      // Keep the current worker and its assets until all old tabs close.
+      // Activating an update must never interrupt a local import or edit.
     })(),
   );
 });

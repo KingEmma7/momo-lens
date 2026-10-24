@@ -1,6 +1,25 @@
 # Contributing to MoMo Lens
 
-Small, reproducible changes are welcome. Follow the local setup in README, keep statement processing client-side, and include a test for a parser or money change.
+Start with a [good first issue](https://github.com/KingEmma7/momo-lens/labels/good%20first%20issue), improve a guide, or report a reproducible problem. Comment on an issue with your intended scope to avoid duplicate work. Keep statement processing client-side and include a regression for a parser or money change.
+
+## Local setup and checks
+
+Use Node 22.23.4 and pnpm 11.17.0 for the tested setup. Run `pnpm install --frozen-lockfile`, then `pnpm dev` and open http://localhost:3000. The [README](README.md#run-locally) explains sample data and production use.
+
+For a prose-only change, check links and run Prettier on the edited files. For code, run the affected tests first, then:
+
+```sh
+pnpm lint
+pnpm typecheck
+pnpm test:coverage
+pnpm test:archive-security
+pnpm exec playwright install chromium
+pnpm build
+pnpm test:e2e
+pnpm format:check
+```
+
+`test:coverage` already runs the unit suite. Browser tests require the production export and start their own server. Normal installation and CI do not require Python. See [VERIFICATION.md](docs/VERIFICATION.md) for measured scope and limits.
 
 ## Privacy comes first
 
