@@ -8,6 +8,8 @@ MoMo Lens is an open source, in-browser analyzer for Ghana mobile money statemen
 
 MoMo Lens is not affiliated with MTN or Telecel. This is a community project. Parser results are estimates derived from statement text. Check your statement before relying on a total or classification. Real, safely redacted statements are still needed to validate provider layouts.
 
+Merged pull requests deploy automatically after the exact main commit passes CI. See the [deployment guide](docs/DEPLOYMENT.md#automatic-deployment-after-merge) for deployment checks and rollback.
+
 ## Features
 
 - Local PDF and CSV import, with a column mapper for unfamiliar CSV layouts.
