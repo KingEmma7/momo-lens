@@ -2,6 +2,22 @@
 
 The public demo is [momo-lens.etagbor.workers.dev](https://momo-lens.etagbor.workers.dev/).
 
+## Automatic deployment after merge
+
+Maintainers review and merge pull requests into protected `main`. After the exact merged commit passes every required CI verification job, the separate deployment job publishes that run's static artifact. No application build or dependency lifecycle script runs with Cloudflare credentials.
+
+The `production` GitHub environment permits only the `main` branch. Its `CLOUDFLARE_API_TOKEN` secret has Editor access to this existing Worker; `CLOUDFLARE_ACCOUNT_ID` is an environment variable. Pull-request verification has no access to that environment or token. Main protection applies to administrators; the solo maintainer can merge their own reviewed PR, so this does not promise an independent second approver.
+
+Before publishing, the job verifies the artifact's commit, run identity and file hashes, then checks that the commit is still current `main` and belongs to a merged PR. Deployments run one at a time. Older successful runs are skipped if main has advanced. The deployment is not cancelled midway by a newer CI run. A main change during the final publish can briefly leave the preceding verified revision live until the newer revision passes and deploys.
+
+The public `/__deployment.json` marker identifies the deployed commit and CI run. After publishing, CI checks that marker, the generated home-page security headers and a real 404 response. A failed live check marks the deployment job unsuccessful; it does not silently roll back or claim the previous site is still active. The artifact is retained for seven days. To retry a failed deployment, choose **Re-run all jobs** for the eligible main commit. **Re-run failed jobs** alone cannot reuse an artifact from an earlier run attempt. Expired artifacts also require a complete rerun.
+
+## Rollback
+
+For a routine rollback, merge a revert PR and let its successful CI publish normally. For an emergency manual rollback, pause this repository's CI workflow in GitHub Actions and wait for all active deployment jobs to finish. An authorized maintainer can inspect `wrangler deployments list` and run `pnpm dlx wrangler@4.148.0 rollback <VERSION_ID>` from this repository, or select the verified version in the Cloudflare dashboard. Only the 100 most recent published versions are eligible. Record the chosen version and check the live marker, security headers and routes. Re-enable CI and merge the corrective PR when ready; the next successful main deployment replaces the rollback.
+
+See [Cloudflare's rollback guide](https://developers.cloudflare.com/workers/versions-and-deployments/rollbacks/) and [Worker token scopes](https://developers.cloudflare.com/workers/authorization/workers/). Hosting credentials belong in the protected environment, never in source files, browser variables or build output.
+
 ## Cloudflare Workers Static Assets
 
 Use Node 22.23.4 and the repository's pinned pnpm 11.17.0. From the repository root:
@@ -12,7 +28,7 @@ pnpm build
 pnpm dlx wrangler@4.148.0 deploy
 ```
 
-The deploy command requires an authorized Cloudflare login. `wrangler.jsonc` publishes the complete generated `out/` directory as static assets, with trailing-slash routes and a real 404 page. It adds no server code or database. Deploy at a dedicated origin: the service worker, parser assets and manifest use root-relative URLs, so a repository subpath such as `/momo-lens/` is not supported by this configuration.
+The manual deploy command requires an authorized Cloudflare login. Pause automatic deployments and wait for any active deployment to finish before using it. `wrangler.jsonc` publishes the complete generated `out/` directory as static assets, with trailing-slash routes and a real 404 page. It adds no server code or database. Deploy at a dedicated origin: the service worker, parser assets and manifest use root-relative URLs, so a repository subpath such as `/momo-lens/` is not supported by this configuration.
 
 Keep the generated `out/_headers`, including its exact inline-script hashes, and the `Cache-Control: no-cache` rule for `sw.js`. Do not replace the generated export headers with the broader source template. After deployment, check the home page and direct `/import/` and `/privacy/` routes, load synthetic sample data, parse a synthetic PDF, export Wrapped, delete local data, and verify offline reload after installation. Inspect CSP, worker MIME types and the service worker update behavior on the live HTTPS origin. Browser parsing must make no external requests.
 

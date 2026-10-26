@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Deploy the exact verified main-merge artifact to Cloudflare automatically, with protected credentials, stale-run and merged-PR checks, a public commit marker, live header/404 verification and documented rollback.
+
 - Complete the typed English catalogue with scoped draft Twi labels and English fallback.
 - Reuse warmed local parser assets after cancellation, including password-protected PDFs.
 - Use singular wording for one imported transaction, read or skipped row, and duplicate.
