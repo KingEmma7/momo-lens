@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   appleWebApp: { capable: true, statusBarStyle: 'default', title: t('MoMo Lens') },
   icons: { icon: '/icons/icon.svg', apple: '/icons/icon-192.png' },
 };
-export const viewport: Viewport = { width: 'device-width', initialScale: 1, themeColor: '#141414' };
+export const viewport: Viewport = { width: 'device-width', initialScale: 1, themeColor: '#f5c849' };
 const devScript = process.env.NODE_ENV === 'development' ? " 'unsafe-eval'" : '';
 const csp = `default-src 'self'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'${devScript}; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'`;
 export default function RootLayout({ children }: { children: React.ReactNode }) {

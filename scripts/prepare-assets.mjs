@@ -34,15 +34,16 @@ function iconPng(size, maskable = false) {
     for (let x = 0; x < size; x++) {
       const px = x / scale;
       const py = y / scale;
-      const margin = maskable ? 30 : 0;
-      const white =
-        (px >= 126 + margin && px <= 170 + margin && py >= 183 && py <= 333) ||
-        (px >= 285 - margin && px <= 329 - margin && py >= 183 && py <= 333) ||
-        (py >= 183 && py <= 290 && Math.abs(Math.abs(px - 228) - (290 - py) * 0.68) < 20);
-      const yellow =
-        (px - 350) ** 2 + (py - 170) ** 2 <= 34 ** 2 ||
-        (px > 368 && px < 402 && Math.abs(py - px + 170) < 11);
-      const colour = yellow ? [20, 20, 20] : white ? [20, 20, 20] : [255, 255, 255];
+      // Match the SVG lens. Maskable icons keep the mark within the safe area.
+      const factor = maskable ? 0.75 : 1;
+      const nx = (px - 256) / factor + 256;
+      const ny = (py - 256) / factor + 256;
+      const distance = Math.hypot(nx - 240, ny - 240);
+      const ring = distance >= 92 && distance <= 132;
+      const dot = distance <= 36;
+      const t = Math.max(0, Math.min(1, ((nx - 320) + (ny - 320)) / 128));
+      const handle = Math.hypot(nx - (320 + 64 * t), ny - (320 + 64 * t)) <= 20;
+      const colour = ring || dot || handle ? [48, 41, 22] : [245, 200, 73];
       const offset = y * (size * 4 + 1) + x * 4 + 1;
       raw[offset] = colour[0];
       raw[offset + 1] = colour[1];
