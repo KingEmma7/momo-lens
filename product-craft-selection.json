@@ -1,0 +1,11 @@
+{
+  "task": "MoMo Lens yellow identity and interactive preview",
+  "registrySha256": "a5b697449b91c411f7dcc81a6ab340601c36f6141b3f58bd3c45763c5b70bc96",
+  "regions": [
+    {"region":"Navigation", "considered":"fluid-tabs", "decision":"Existing links are route navigation, not tab panels; the component's tab state model would change navigation semantics."},
+    {"region":"Statement review and filters", "considered":"filtered-view-link", "decision":"Inventory-specific record schema and URL serialization do not fit private financial transactions. Existing local filters already handle this workflow."},
+    {"region":"Sample and import actions", "considered":"metal-button, morph-status", "decision":"Existing native controls already expose genuine async/error states. Decorative metal and a save-specific state control would obscure these actions."},
+    {"region":"Charts, overview, logo and privacy content", "considered":"all remaining approved components", "decision":"The other components are galleries, visual effects, fictional fixtures or unrelated workflows. They do not accept transaction-chart semantics and would add unneeded interaction."}
+  ],
+  "verification":"Test synthetic sample loading, navigation, keyboard focus, responsive widths, contrast and reduced motion."
+}

@@ -25,6 +25,12 @@ export function Logo({ _small = false, small = false }: { _small?: boolean; smal
   const { t } = useI18n();
   return (
     <span className={`brand ${small ? 'small' : ''}`}>
+      <svg className="brand-mark" viewBox="0 0 40 40" aria-hidden="true">
+        <rect width="40" height="40" rx="12" fill="#f5c849" />
+        <circle cx="19" cy="19" r="9" fill="none" stroke="#302916" strokeWidth="3" />
+        <path d="M25.5 25.5 30 30" stroke="#302916" strokeWidth="3" strokeLinecap="round" />
+        <circle cx="19" cy="19" r="3" fill="#302916" />
+      </svg>
       <TranslatedText text={t('MoMo Lens')} />
     </span>
   );
